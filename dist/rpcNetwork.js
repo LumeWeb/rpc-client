@@ -50,6 +50,17 @@ export default class RpcNetwork {
         this._relays.push(pubkey);
         this._relays = [...new Set(this._relays)];
     }
+    removeRelay(pubkey) {
+        if (!this._relays.includes(pubkey)) {
+            return false;
+        }
+        delete this._relays[this._relays.indexOf(pubkey)];
+        this._relays = Object.values(this._relays);
+        return true;
+    }
+    clearRelays() {
+        this._relays = [];
+    }
     query(query, chain, data = {}, force = false) {
         return new RpcQuery(this, {
             query,

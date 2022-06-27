@@ -20,6 +20,8 @@ export default class RpcNetwork {
     get force(): boolean;
     set force(value: boolean);
     addRelay(pubkey: string): void;
+    removeRelay(pubkey: string): boolean;
+    clearRelays(): void;
     query(query: string, chain: string, data?: object | any[], force?: boolean): RpcQuery;
 }
 //# sourceMappingURL=rpcNetwork.d.ts.map
