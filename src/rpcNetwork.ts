@@ -17,7 +17,7 @@ export default class RpcNetwork {
 
   constructor(dht = new DHT()) {
     this._dht = dht;
-    this._ready = this._dht.ready()
+    this._ready = this._dht.ready();
   }
 
   get ready(): Promise<void> {

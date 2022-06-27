@@ -1,7 +1,7 @@
 import { clearTimeout, setTimeout } from "timers";
 import RpcNetwork from "./rpcNetwork.js";
 import { pack, unpack } from "msgpackr";
-import {RPCRequest, RPCResponse} from "./types";
+import { RPCRequest, RPCResponse } from "./types";
 
 export default class RpcQuery {
   private _network: RpcNetwork;
@@ -42,7 +42,7 @@ export default class RpcQuery {
         this._promiseResolve = resolve;
       });
 
-        this._timeoutTimer =
+    this._timeoutTimer =
       this._timeoutTimer ??
       setTimeout(
         this.handeTimeout.bind(this),
@@ -93,7 +93,10 @@ export default class RpcQuery {
       responses[responseIndex]++;
     }
     for (const responseIndex in responses) {
-      if (responses[responseIndex] / responseStoreKeys.length >= this._network.majorityThreshold) {
+      if (
+        responses[responseIndex] / responseStoreKeys.length >=
+        this._network.majorityThreshold
+      ) {
         const response: RPCResponse | null =
           responseStore[responseStoreKeys[parseInt(responseIndex, 10)]];
 
