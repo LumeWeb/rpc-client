@@ -67,7 +67,8 @@ export default class RpcQuery {
             responses[responseIndex]++;
         }
         for (const responseIndex in responses) {
-            if (responses[responseIndex] / responseStoreKeys.length >= this._network.majorityThreshold) {
+            if (responses[responseIndex] / responseStoreKeys.length >=
+                this._network.majorityThreshold) {
                 const response = responseStore[responseStoreKeys[parseInt(responseIndex, 10)]];
                 // @ts-ignore
                 if (null === response || null === response?.data) {
