@@ -5,7 +5,8 @@
     "description": "",
     "main": "dist/index.js",
     "devDependencies": {
-        "@types/node": "^18.0.0"
+        "@types/node": "^18.0.0",
+        "prettier": "^2.7.1"
     },
     "dependencies": {
         "@hyperswarm/dht": "^6.0.1",
