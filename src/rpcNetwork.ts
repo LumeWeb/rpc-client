@@ -69,6 +69,21 @@ export default class RpcNetwork {
     this._relays = [...new Set(this._relays)];
   }
 
+  public removeRelay(pubkey: string): boolean {
+    if (!this._relays.includes(pubkey)) {
+      return false;
+    }
+
+    delete this._relays[this._relays.indexOf(pubkey)];
+    this._relays = Object.values(this._relays);
+
+    return true;
+  }
+
+  public clearRelays(): void {
+    this._relays = [];
+  }
+
   public query(
     query: string,
     chain: string,
