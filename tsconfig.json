@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "declaration": true,
+        "strict": true,
+        "module": "esnext",
+        "target": "esnext",
+        "esModuleInterop": true,
+        "sourceMap": false,
+        "rootDir": "src",
+        "outDir": "dist",
+        "typeRoots": [
+            "node_modules/@types",
+        ],
+        "moduleResolution": "node",
+        "declarationMap": true,
+        "declarationDir": "dist",
+        "emitDeclarationOnly": false,
+        "allowJs": true
+    },
+    "include": [
+        "src"
+    ]
+}

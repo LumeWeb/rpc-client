@@ -1,0 +1,14 @@
+{
+    "name": "@lumeweb/dht-rpc-client",
+    "type": "module",
+    "version": "0.1.0",
+    "description": "",
+    "main": "dist/index.js",
+    "devDependencies": {
+        "@types/node": "^18.0.0"
+    },
+    "dependencies": {
+        "@hyperswarm/dht": "^6.0.1",
+        "msgpackr": "^1.6.1"
+    }
+}
