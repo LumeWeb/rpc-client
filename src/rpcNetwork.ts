@@ -1,10 +1,6 @@
-// tslint:disable:no-var-requires
-import { createRequire } from "module";
 import RpcQuery from "./rpcQuery.js";
-
-const require = createRequire(import.meta.url);
-
-const DHT = require("@hyperswarm/dht");
+// @ts-ignore
+import DHT from "@hyperswarm/dht";
 
 export default class RpcNetwork {
   private _dht: typeof DHT;
