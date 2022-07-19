@@ -63,7 +63,16 @@ export default class RpcQuery {
   }
 
   private async queryRelay(relay: string): Promise<any> {
-    const socket = this._network.dht.connect(Buffer.from(relay, "hex"));
+    let socket: any;
+
+    try {
+      socket = this._network.dht.connect(Buffer.from(relay, "hex"));
+      if (isPromise(socket)) {
+        socket = await socket;
+      }
+    } catch (e) {
+      return;
+    }
     return new Promise((resolve, reject) => {
       socket.on("data", (res: Buffer) => {
         socket.end();
