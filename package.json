@@ -10,6 +10,7 @@
     },
     "dependencies": {
         "@hyperswarm/dht": "^6.0.1",
+        "libskynet": "^0.0.61",
         "msgpackr": "^1.6.1"
     }
 }
