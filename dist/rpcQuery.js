@@ -1,10 +1,17 @@
 import { clearTimeout, setTimeout } from "timers";
 import { pack, unpack } from "msgpackr";
+import { Buffer } from "buffer";
+import { blake2b } from "libskynet";
 export default class RpcQuery {
+    _network;
+    _query;
+    _promise;
+    _timeoutTimer;
+    _timeout = false;
+    _completed = false;
+    _responses = {};
+    _promiseResolve;
     constructor(network, query) {
-        this._timeout = false;
-        this._completed = false;
-        this._responses = {};
         this._network = network;
         this._query = query;
         this.init();
@@ -41,7 +48,16 @@ export default class RpcQuery {
         this.checkResponses();
     }
     async queryRelay(relay) {
-        const socket = this._network.dht.connect(Buffer.from(relay, "hex"));
+        let socket;
+        try {
+            socket = this._network.dht.connect(Buffer.from(relay, "hex"));
+            if (isPromise(socket)) {
+                socket = await socket;
+            }
+        }
+        catch (e) {
+            return;
+        }
         return new Promise((resolve, reject) => {
             socket.on("data", (res) => {
                 socket.end();
@@ -57,25 +73,31 @@ export default class RpcQuery {
         });
     }
     checkResponses() {
-        const responses = {};
         const responseStore = this._responses;
-        const responseStoreKeys = Object.keys(responseStore);
-        // tslint:disable-next-line:forin
-        for (const peer in responseStore) {
-            const responseIndex = responseStoreKeys.indexOf(peer);
-            responses[responseIndex] = responses[responseIndex] ?? 0;
-            responses[responseIndex]++;
-        }
-        for (const responseIndex in responses) {
-            if (responses[responseIndex] / responseStoreKeys.length >=
+        const responseStoreData = Object.values(responseStore);
+        const responseObjects = responseStoreData.reduce((output, item) => {
+            const hash = Buffer.from(blake2b(Buffer.from(JSON.stringify(item?.data)))).toString("hex");
+            output[hash] = item?.data;
+            return output;
+        }, {});
+        const responses = responseStoreData.reduce((output, item) => {
+            const hash = Buffer.from(blake2b(Buffer.from(JSON.stringify(item?.data)))).toString("hex");
+            output[hash] = output[hash] ?? 0;
+            output[hash]++;
+            return output;
+        }, {});
+        for (const responseHash in responses) {
+            if (responses[responseHash] / responseStoreData.length >=
                 this._network.majorityThreshold) {
-                const response = responseStore[responseStoreKeys[parseInt(responseIndex, 10)]];
                 // @ts-ignore
-                if (null === response || null === response?.data) {
+                const response = responseObjects[responseHash];
+                // @ts-ignore
+                if (null === response) {
                     this.retry();
                     return;
                 }
-                this.resolve(response?.data);
+                this.resolve(response);
+                break;
             }
         }
     }
@@ -86,4 +108,9 @@ export default class RpcQuery {
         }
         this.init();
     }
+}
+function isPromise(obj) {
+    return (!!obj &&
+        (typeof obj === "object" || typeof obj === "function") &&
+        typeof obj.then === "function");
 }
