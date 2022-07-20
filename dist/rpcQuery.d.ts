@@ -10,7 +10,7 @@ export default class RpcQuery {
     private _responses;
     private _promiseResolve?;
     constructor(network: RpcNetwork, query: RPCRequest);
-    get promise(): Promise<any>;
+    get result(): Promise<any>;
     private handeTimeout;
     private resolve;
     private init;

@@ -16,7 +16,7 @@ export default class RpcQuery {
         this._query = query;
         this.init();
     }
-    get promise() {
+    get result() {
         return this._promise;
     }
     handeTimeout() {
