@@ -21,7 +21,7 @@ export default class RpcQuery {
     this.init();
   }
 
-  get promise(): Promise<any> {
+  get result(): Promise<any> {
     return this._promise as Promise<any>;
   }
 
