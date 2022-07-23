@@ -3,30 +3,28 @@ import RpcQuery from "./rpcQuery.js";
 import DHT from "@hyperswarm/dht";
 
 export default class RpcNetwork {
-  private _dht: typeof DHT;
-  private _majorityThreshold = 0.75;
-  private _maxTtl = 12 * 60 * 60;
-  private _queryTimeout = 30;
-  private _relays: string[] = [];
-  private _ready: Promise<void>;
-  private _force: boolean = false;
-
   constructor(dht = new DHT()) {
     this._dht = dht;
     this._ready = this._dht.ready();
   }
 
-  get ready(): Promise<void> {
-    return this._ready;
-  }
-
-  get relays(): string[] {
-    return this._relays;
-  }
+  private _dht: typeof DHT;
 
   get dht() {
     return this._dht;
   }
+
+  private _majorityThreshold = 0.75;
+
+  get majorityThreshold(): number {
+    return this._majorityThreshold;
+  }
+
+  set majorityThreshold(value: number) {
+    this._majorityThreshold = value;
+  }
+
+  private _maxTtl = 12 * 60 * 60;
 
   get maxTtl(): number {
     return this._maxTtl;
@@ -36,6 +34,8 @@ export default class RpcNetwork {
     this._maxTtl = value;
   }
 
+  private _queryTimeout = 30;
+
   get queryTimeout(): number {
     return this._queryTimeout;
   }
@@ -44,13 +44,29 @@ export default class RpcNetwork {
     this._queryTimeout = value;
   }
 
-  get majorityThreshold(): number {
-    return this._majorityThreshold;
+  private _relayTimeout = 2;
+
+  get relayTimeout(): number {
+    return this._relayTimeout;
   }
 
-  set majorityThreshold(value: number) {
-    this._majorityThreshold = value;
+  set relayTimeout(value: number) {
+    this._relayTimeout = value;
   }
+
+  private _relays: string[] = [];
+
+  get relays(): string[] {
+    return this._relays;
+  }
+
+  private _ready: Promise<void>;
+
+  get ready(): Promise<void> {
+    return this._ready;
+  }
+
+  private _force: boolean = false;
 
   get force(): boolean {
     return this._force;
