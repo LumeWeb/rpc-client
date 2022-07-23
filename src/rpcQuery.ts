@@ -3,7 +3,7 @@ import RpcNetwork from "./rpcNetwork.js";
 import { pack, unpack } from "msgpackr";
 import { RPCRequest, RPCResponse } from "./types";
 import { Buffer } from "buffer";
-import {blake2b} from "libskynet"
+import { blake2b } from "libskynet";
 
 export default class RpcQuery {
   private _network: RpcNetwork;
@@ -76,7 +76,9 @@ export default class RpcQuery {
       return;
     }
     return new Promise((resolve, reject) => {
+      let timer: NodeJS.Timeout;
       socket.on("data", (res: Buffer) => {
+        clearTimeout(timer);
         socket.end();
         const response = unpack(res);
         if (response && response.error) {
@@ -88,6 +90,9 @@ export default class RpcQuery {
       socket.on("error", (error: any) => reject({ error }));
       socket.write("rpc");
       socket.write(pack(this._query));
+      timer = setTimeout(() => {
+        reject("timeout");
+      }, this._network.relayTimeout * 1000);
     });
   }
 
@@ -99,16 +104,20 @@ export default class RpcQuery {
     type ResponseGroup = { [response: string]: number };
 
     const responseObjects = responseStoreData.reduce((output: any, item) => {
-      const hash = Buffer.from(blake2b(Buffer.from(JSON.stringify(item?.data)))).toString("hex");
+      const hash = Buffer.from(
+        blake2b(Buffer.from(JSON.stringify(item?.data)))
+      ).toString("hex");
       output[hash] = item?.data;
       return output;
     }, {});
     const responses: ResponseGroup = responseStoreData.reduce(
       (output: ResponseGroup, item) => {
-        const hash = Buffer.from(blake2b(Buffer.from(JSON.stringify(item?.data)))).toString("hex");
+        const hash = Buffer.from(
+          blake2b(Buffer.from(JSON.stringify(item?.data)))
+        ).toString("hex");
         output[hash] = output[hash] ?? 0;
-          output[hash]++;
-          return output;
+        output[hash]++;
+        return output;
       },
       {}
     );
