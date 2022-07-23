@@ -86,6 +86,7 @@ export default class RpcQuery {
         resolve(null);
       });
       socket.on("error", (error: any) => reject({ error }));
+      socket.write("rpc");
       socket.write(pack(this._query));
     });
   }
