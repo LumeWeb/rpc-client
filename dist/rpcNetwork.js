@@ -2,44 +2,51 @@ import RpcQuery from "./rpcQuery.js";
 // @ts-ignore
 import DHT from "@hyperswarm/dht";
 export default class RpcNetwork {
-    _dht;
-    _majorityThreshold = 0.75;
-    _maxTtl = 12 * 60 * 60;
-    _queryTimeout = 30;
-    _relays = [];
-    _ready;
-    _force = false;
     constructor(dht = new DHT()) {
         this._dht = dht;
         this._ready = this._dht.ready();
     }
-    get ready() {
-        return this._ready;
-    }
-    get relays() {
-        return this._relays;
-    }
+    _dht;
     get dht() {
         return this._dht;
     }
-    get maxTtl() {
-        return this._maxTtl;
-    }
-    set maxTtl(value) {
-        this._maxTtl = value;
-    }
-    get queryTimeout() {
-        return this._queryTimeout;
-    }
-    set queryTimeout(value) {
-        this._queryTimeout = value;
-    }
+    _majorityThreshold = 0.75;
     get majorityThreshold() {
         return this._majorityThreshold;
     }
     set majorityThreshold(value) {
         this._majorityThreshold = value;
     }
+    _maxTtl = 12 * 60 * 60;
+    get maxTtl() {
+        return this._maxTtl;
+    }
+    set maxTtl(value) {
+        this._maxTtl = value;
+    }
+    _queryTimeout = 30;
+    get queryTimeout() {
+        return this._queryTimeout;
+    }
+    set queryTimeout(value) {
+        this._queryTimeout = value;
+    }
+    _relayTimeout = 2;
+    get relayTimeout() {
+        return this._relayTimeout;
+    }
+    set relayTimeout(value) {
+        this._relayTimeout = value;
+    }
+    _relays = [];
+    get relays() {
+        return this._relays;
+    }
+    _ready;
+    get ready() {
+        return this._ready;
+    }
+    _force = false;
     get force() {
         return this._force;
     }

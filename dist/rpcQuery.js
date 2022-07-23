@@ -59,7 +59,9 @@ export default class RpcQuery {
             return;
         }
         return new Promise((resolve, reject) => {
+            let timer;
             socket.on("data", (res) => {
+                clearTimeout(timer);
                 socket.end();
                 const response = unpack(res);
                 if (response && response.error) {
@@ -69,7 +71,11 @@ export default class RpcQuery {
                 resolve(null);
             });
             socket.on("error", (error) => reject({ error }));
+            socket.write("rpc");
             socket.write(pack(this._query));
+            timer = setTimeout(() => {
+                reject("timeout");
+            }, this._network.relayTimeout * 1000);
         });
     }
     checkResponses() {
