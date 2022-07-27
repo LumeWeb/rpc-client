@@ -5,7 +5,6 @@ import DHT from "@hyperswarm/dht";
 export default class RpcNetwork {
   constructor(dht = new DHT()) {
     this._dht = dht;
-    this._ready = this._dht.ready();
   }
 
   private _dht: typeof DHT;
@@ -63,6 +62,9 @@ export default class RpcNetwork {
   private _ready: Promise<void>;
 
   get ready(): Promise<void> {
+    if (!this._ready) {
+      this._ready = this._dht.ready();
+    }
     return this._ready;
   }
 
