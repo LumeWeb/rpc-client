@@ -17,7 +17,7 @@ export default class RpcNetwork {
     set relayTimeout(value: number);
     private _relays;
     get relays(): string[];
-    private _ready;
+    private _ready?;
     get ready(): Promise<void>;
     private _force;
     get force(): boolean;
