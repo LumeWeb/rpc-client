@@ -4,7 +4,6 @@ import DHT from "@hyperswarm/dht";
 export default class RpcNetwork {
     constructor(dht = new DHT()) {
         this._dht = dht;
-        this._ready = this._dht.ready();
     }
     _dht;
     get dht() {
@@ -44,6 +43,9 @@ export default class RpcNetwork {
     }
     _ready;
     get ready() {
+        if (!this._ready) {
+            this._ready = this._dht.ready();
+        }
         return this._ready;
     }
     _force = false;
