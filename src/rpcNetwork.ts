@@ -59,11 +59,11 @@ export default class RpcNetwork {
     return this._relays;
   }
 
-  private _ready: Promise<void>;
+  private _ready?: Promise<void>;
 
   get ready(): Promise<void> {
     if (!this._ready) {
-      this._ready = this._dht.ready();
+      this._ready = this._dht.ready() as Promise<void>;
     }
     return this._ready;
   }
