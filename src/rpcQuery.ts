@@ -4,8 +4,7 @@ import { pack, unpack } from "msgpackr";
 import { RPCRequest, RPCResponse } from "./types";
 import { Buffer } from "buffer";
 import { blake2b } from "libskynet";
-
-import jsonStringify from "json-stable-stringify";
+import { flatten } from "./util.js";
 
 export default class RpcQuery {
   private _network: RpcNetwork;
@@ -100,22 +99,24 @@ export default class RpcQuery {
 
   private checkResponses() {
     const responseStore = this._responses;
-
     const responseStoreData = Object.values(responseStore);
 
     type ResponseGroup = { [response: string]: number };
 
     const responseObjects = responseStoreData.reduce((output: any, item) => {
+      const itemFlattened = flatten(item?.data).sort();
+
       const hash = Buffer.from(
-        blake2b(Buffer.from(jsonStringify(item?.data)))
+        blake2b(Buffer.from(JSON.stringify(itemFlattened)))
       ).toString("hex");
       output[hash] = item?.data;
       return output;
     }, {});
     const responses: ResponseGroup = responseStoreData.reduce(
       (output: ResponseGroup, item) => {
+        const itemFlattened = flatten(item?.data).sort();
         const hash = Buffer.from(
-          blake2b(Buffer.from(jsonStringify(item?.data)))
+          blake2b(Buffer.from(JSON.stringify(itemFlattened)))
         ).toString("hex");
         output[hash] = output[hash] ?? 0;
         output[hash]++;
