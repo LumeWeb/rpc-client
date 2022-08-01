@@ -15,7 +15,10 @@ export function flatten(target, opts = {}) {
     const output = [];
     function step(object, prev, currentDepth) {
         currentDepth = currentDepth || 1;
-        Object.keys(object).forEach(function (key) {
+        if (!Array.isArray(object)) {
+            object = Object.keys(object);
+        }
+        object.forEach(function (key) {
             const value = object[key];
             const isarray = opts.safe && Array.isArray(value);
             const type = Object.prototype.toString.call(value);
