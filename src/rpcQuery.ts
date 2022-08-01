@@ -5,7 +5,7 @@ import { RPCRequest, RPCResponse } from "./types";
 import { Buffer } from "buffer";
 import { blake2b } from "libskynet";
 
-import jsonStringify from "json-stable-stringify"
+import jsonStringify from "json-stable-stringify";
 
 export default class RpcQuery {
   private _network: RpcNetwork;
@@ -94,7 +94,7 @@ export default class RpcQuery {
       socket.write(pack(this._query));
       timer = setTimeout(() => {
         reject("timeout");
-      }, this._network.relayTimeout * 1000) as  NodeJS.Timeout;
+      }, this._network.relayTimeout * 1000) as NodeJS.Timeout;
     });
   }
 
