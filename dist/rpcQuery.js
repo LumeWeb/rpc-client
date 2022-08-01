@@ -2,6 +2,7 @@ import { clearTimeout, setTimeout } from "timers";
 import { pack, unpack } from "msgpackr";
 import { Buffer } from "buffer";
 import { blake2b } from "libskynet";
+import jsonStringify from "json-stable-stringify";
 export default class RpcQuery {
     _network;
     _query;
@@ -82,12 +83,12 @@ export default class RpcQuery {
         const responseStore = this._responses;
         const responseStoreData = Object.values(responseStore);
         const responseObjects = responseStoreData.reduce((output, item) => {
-            const hash = Buffer.from(blake2b(Buffer.from(JSON.stringify(item?.data)))).toString("hex");
+            const hash = Buffer.from(blake2b(Buffer.from(jsonStringify(item?.data)))).toString("hex");
             output[hash] = item?.data;
             return output;
         }, {});
         const responses = responseStoreData.reduce((output, item) => {
-            const hash = Buffer.from(blake2b(Buffer.from(JSON.stringify(item?.data)))).toString("hex");
+            const hash = Buffer.from(blake2b(Buffer.from(jsonStringify(item?.data)))).toString("hex");
             output[hash] = output[hash] ?? 0;
             output[hash]++;
             return output;
