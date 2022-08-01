@@ -76,7 +76,7 @@ export default class RpcQuery {
       return;
     }
     return new Promise((resolve, reject) => {
-      let timer: number;
+      let timer: NodeJS.Timeout;
       socket.on("data", (res: Buffer) => {
         clearTimeout(timer);
         socket.end();
@@ -92,7 +92,7 @@ export default class RpcQuery {
       socket.write(pack(this._query));
       timer = setTimeout(() => {
         reject("timeout");
-      }, this._network.relayTimeout * 1000);
+      }, this._network.relayTimeout * 1000) as  NodeJS.Timeout;
     });
   }
 
