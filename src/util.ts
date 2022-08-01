@@ -1,3 +1,5 @@
+import { isArray } from "util";
+
 function isBuffer(obj: any): boolean {
   return (
     obj &&
@@ -20,7 +22,10 @@ export function flatten(target: any, opts: any = {}): any[] {
 
   function step(object: any, prev?: any, currentDepth?: any) {
     currentDepth = currentDepth || 1;
-    Object.keys(object).forEach(function (key) {
+    if (!Array.isArray(object)) {
+      object = Object.keys(object);
+    }
+    object.forEach(function (key: any) {
       const value = object[key];
       const isarray = opts.safe && Array.isArray(value);
       const type = Object.prototype.toString.call(value);
