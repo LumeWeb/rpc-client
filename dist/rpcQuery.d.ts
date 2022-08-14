@@ -9,6 +9,8 @@ export default class RpcQuery {
     private _completed;
     private _responses;
     private _promiseResolve?;
+    private _maxTries;
+    private _tries;
     constructor(network: RpcNetwork, query: RPCRequest);
     get result(): Promise<any>;
     private handeTimeout;

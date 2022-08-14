@@ -12,6 +12,8 @@ export default class RpcQuery {
     _completed = false;
     _responses = {};
     _promiseResolve;
+    _maxTries = 3;
+    _tries = 0;
     constructor(network, query) {
         this._network = network;
         this._query = query;
@@ -99,11 +101,15 @@ export default class RpcQuery {
             if (responses[responseHash] / responseStoreData.length >=
                 this._network.majorityThreshold) {
                 // @ts-ignore
-                const response = responseObjects[responseHash];
+                let response = responseObjects[responseHash];
                 // @ts-ignore
                 if (null === response) {
-                    this.retry();
-                    return;
+                    if (this._tries <= this._maxTries) {
+                        this._tries++;
+                        this.retry();
+                        return;
+                    }
+                    response = false;
                 }
                 this.resolve(response);
                 break;
