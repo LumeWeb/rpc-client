@@ -23,7 +23,7 @@ export function flatten(target: any, opts: any = {}): any[] {
   function step(object: any, prev?: any, currentDepth?: any) {
     currentDepth = currentDepth || 1;
     if (!Array.isArray(object)) {
-      object = Object.keys(object);
+      object = Object.keys(object ?? {});
     }
     object.forEach(function (key: any) {
       const value = object[key];
