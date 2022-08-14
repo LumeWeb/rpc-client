@@ -16,7 +16,7 @@ export function flatten(target, opts = {}) {
     function step(object, prev, currentDepth) {
         currentDepth = currentDepth || 1;
         if (!Array.isArray(object)) {
-            object = Object.keys(object);
+            object = Object.keys(object ?? {});
         }
         object.forEach(function (key) {
             const value = object[key];
