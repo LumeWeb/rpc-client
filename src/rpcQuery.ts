@@ -79,9 +79,11 @@ export default class RpcQuery {
       return;
     }
     return new Promise((resolve, reject) => {
-      let timer: NodeJS.Timeout;
+      let timer: any;
       socket.on("data", (res: Buffer) => {
-        clearTimeout(timer);
+        if (timer && timer.close) {
+          clearTimeout(timer as any);
+        }
         socket.end();
         const response = unpack(res as any) as RPCResponse;
         if (response && response.error) {
