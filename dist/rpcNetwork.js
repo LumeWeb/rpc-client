@@ -48,12 +48,12 @@ export default class RpcNetwork {
         }
         return this._ready;
     }
-    _force = false;
-    get force() {
-        return this._force;
+    _bypassCache = false;
+    get bypassCache() {
+        return this._bypassCache;
     }
-    set force(value) {
-        this._force = value;
+    set bypassCache(value) {
+        this._bypassCache = value;
     }
     addRelay(pubkey) {
         this._relays.push(pubkey);
@@ -70,12 +70,12 @@ export default class RpcNetwork {
     clearRelays() {
         this._relays = [];
     }
-    query(query, chain, data = {}, force = false) {
+    query(query, chain, data = {}, bypassCache = false) {
         return new RpcQuery(this, {
             query,
             chain,
             data,
-            force: force || this._force,
+            bypassCache: bypassCache || this._bypassCache,
         });
     }
 }

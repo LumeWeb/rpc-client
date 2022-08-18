@@ -1,13 +1,12 @@
 export interface RPCRequest {
-    force: boolean;
-    chain: string;
-    query: string;
-    data: any;
+  bypassCache: boolean;
+  chain: string;
+  query: string;
+  data: any;
 }
 export interface RPCResponse {
-    updated: number;
-    data: any | {
-        error: string | boolean;
-    };
+  updated: number;
+  data: any;
+  error?: string;
 }
 //# sourceMappingURL=types.d.ts.map

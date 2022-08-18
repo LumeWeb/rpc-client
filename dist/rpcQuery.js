@@ -64,7 +64,9 @@ export default class RpcQuery {
         return new Promise((resolve, reject) => {
             let timer;
             socket.on("data", (res) => {
-                clearTimeout(timer);
+                if (timer && timer.close) {
+                    clearTimeout(timer);
+                }
                 socket.end();
                 const response = unpack(res);
                 if (response && response.error) {
