@@ -7,9 +7,6 @@ export interface RPCRequest {
 
 export interface RPCResponse {
   updated: number;
-  data:
-    | any
-    | {
-        error: string | boolean;
-      };
+  data: any;
+  error?: string
 }
