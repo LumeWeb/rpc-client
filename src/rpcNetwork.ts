@@ -68,14 +68,14 @@ export default class RpcNetwork {
     return this._ready;
   }
 
-  private _force: boolean = false;
+  private _bypassCache: boolean = false;
 
-  get force(): boolean {
-    return this._force;
+  get bypassCache(): boolean {
+    return this._bypassCache;
   }
 
-  set force(value: boolean) {
-    this._force = value;
+  set bypassCache(value: boolean) {
+    this._bypassCache = value;
   }
 
   public addRelay(pubkey: string): void {
@@ -102,13 +102,13 @@ export default class RpcNetwork {
     query: string,
     chain: string,
     data: object | any[] = {},
-    force: boolean = false
+    bypassCache: boolean = false
   ): RpcQuery {
     return new RpcQuery(this, {
       query,
       chain,
       data,
-      force: force || this._force,
+        bypassCache: bypassCache || this._bypassCache,
     });
   }
 }

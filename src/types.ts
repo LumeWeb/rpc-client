@@ -1,5 +1,5 @@
 export interface RPCRequest {
-  force: boolean;
+  bypassCache: boolean;
   chain: string;
   query: string;
   data: any;
