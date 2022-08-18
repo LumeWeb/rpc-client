@@ -1,7 +1,7 @@
 import { clearTimeout, setTimeout } from "timers";
 import RpcNetwork from "./rpcNetwork.js";
 import { pack, unpack } from "msgpackr";
-import { RPCRequest, RPCResponse } from "./types";
+import { RPCRequest, RPCResponse } from "./types.js";
 import { Buffer } from "buffer";
 import { blake2b } from "libskynet";
 import { flatten } from "./util.js";
