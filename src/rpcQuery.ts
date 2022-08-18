@@ -83,7 +83,7 @@ export default class RpcQuery {
       socket.on("data", (res: Buffer) => {
         clearTimeout(timer);
         socket.end();
-        const response = unpack(res);
+        const response = unpack(res as any) as RPCResponse;
         if (response && response.error) {
           return reject(response);
         }
