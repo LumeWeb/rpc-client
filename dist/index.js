@@ -1,4 +1,7 @@
-import RpcNetwork from "./rpcNetwork.js";
-import RpcQuery from "./rpcNetwork.js";
+import RpcNetwork from "./network.js";
+import RpcQueryBase from "./query/base.js";
+import SimpleRpcQuery from "./query/simple.js";
+import StreamingRpcQuery from "./query/streaming.js";
+import WisdomRpcQuery from "./query/wisdom.js";
 export * from "./types.js";
-export { RpcNetwork, RpcQuery };
+export { RpcNetwork, RpcQueryBase, SimpleRpcQuery, StreamingRpcQuery, WisdomRpcQuery, };

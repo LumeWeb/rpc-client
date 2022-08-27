@@ -1,12 +1,9 @@
-export interface RPCRequest {
-  bypassCache: boolean;
-  chain: string;
-  query: string;
-  data: any;
+export interface RpcQueryOptions {
+  queryTimeout?: number;
+  relayTimeout?: number;
 }
-export interface RPCResponse {
-  updated: number;
-  data: any;
-  error?: string;
+export interface StreamingRpcQueryOptions extends RpcQueryOptions {
+  streamHandler: StreamHandlerFunction;
 }
+export declare type StreamHandlerFunction = (data: Uint8Array) => void;
 //# sourceMappingURL=types.d.ts.map
