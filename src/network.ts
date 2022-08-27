@@ -1,6 +1,9 @@
-import RpcQuery from "./rpcQuery.js";
+import WisdomRpcQuery from "./query/wisdom.js";
 // @ts-ignore
 import DHT from "@hyperswarm/dht";
+import StreamingRpcQuery from "./query/streaming.js";
+import { RpcQueryOptions, StreamHandlerFunction } from "./types.js";
+import SimpleRpcQuery from "./query/simple.js";
 
 export default class RpcNetwork {
   constructor(dht = new DHT()) {
@@ -21,16 +24,6 @@ export default class RpcNetwork {
 
   set majorityThreshold(value: number) {
     this._majorityThreshold = value;
-  }
-
-  private _maxTtl = 12 * 60 * 60;
-
-  get maxTtl(): number {
-    return this._maxTtl;
-  }
-
-  set maxTtl(value: number) {
-    this._maxTtl = value;
   }
 
   private _queryTimeout = 30;
@@ -98,17 +91,57 @@ export default class RpcNetwork {
     this._relays = [];
   }
 
-  public query(
-    query: string,
-    chain: string,
+  public wisdomQuery(
+    method: string,
+    module: string,
     data: object | any[] = {},
-    bypassCache: boolean = false
-  ): RpcQuery {
-    return new RpcQuery(this, {
-      query,
-      chain,
-      data,
+    bypassCache: boolean = false,
+    options: RpcQueryOptions = {}
+  ): WisdomRpcQuery {
+    return new WisdomRpcQuery(
+      this,
+      {
+        method,
+        module,
+        data,
         bypassCache: bypassCache || this._bypassCache,
-    });
+      },
+      options
+    );
+  }
+
+  public streamingQuery(
+    relay: Buffer | string,
+    method: string,
+    module: string,
+    streamHandler: StreamHandlerFunction,
+    data: object | any[] = {},
+    options: RpcQueryOptions = {}
+  ): StreamingRpcQuery {
+    return new StreamingRpcQuery(
+      this,
+      relay,
+      { method, module, data },
+      { streamHandler, ...options }
+    );
+  }
+
+  public simpleQuery(
+    relay: Buffer | string,
+    method: string,
+    module: string,
+    data: object | any[] = {},
+    options: RpcQueryOptions = {}
+  ): SimpleRpcQuery {
+    return new SimpleRpcQuery(
+      this,
+      relay,
+      {
+        method,
+        module,
+        data,
+      },
+      options
+    );
   }
 }

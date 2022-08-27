@@ -54,3 +54,11 @@ export function flatten(target: any, opts: any = {}): any[] {
 
   return output;
 }
+
+export function isPromise(obj: Promise<any>) {
+  return (
+    !!obj &&
+    (typeof obj === "object" || typeof obj === "function") &&
+    typeof obj.then === "function"
+  );
+}
