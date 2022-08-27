@@ -5,7 +5,7 @@ import { clearTimeout, setTimeout } from "timers";
 import { pack, unpack } from "msgpackr";
 import type { RPCRequest } from "@lumeweb/relay";
 import { RPCResponse } from "@lumeweb/relay";
-import RpcNetwork from "../rpcNetwork.js";
+import RpcNetwork from "../network.js";
 import { StreamingRpcQueryOptions } from "../types.js";
 
 export default class StreamingRpcQuery extends SimpleRpcQuery {

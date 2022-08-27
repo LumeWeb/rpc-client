@@ -2,7 +2,7 @@ import { clearTimeout, setTimeout } from "timers";
 import { pack, unpack } from "msgpackr";
 import { Buffer } from "buffer";
 import { isPromise } from "../util.js";
-import RpcNetwork from "../rpcNetwork.js";
+import RpcNetwork from "../network.js";
 import { RpcQueryOptions } from "../types.js";
 import type { RPCRequest, RPCResponse } from "@lumeweb/relay";
 

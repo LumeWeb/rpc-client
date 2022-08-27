@@ -1,5 +1,5 @@
 import RpcQueryBase from "./base.js";
-import RpcNetwork from "../rpcNetwork.js";
+import RpcNetwork from "../network.js";
 import type { RPCRequest } from "@lumeweb/relay";
 import { RpcQueryOptions } from "../types.js";
 import type { Buffer } from "buffer";
