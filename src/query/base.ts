@@ -83,7 +83,7 @@ export default abstract class RpcQueryBase {
 
     let relayKey: Buffer = relay as Buffer;
 
-    if (relay === "string") {
+    if (typeof relay === "string") {
       relayKey = Buffer.from(relay, "hex");
     }
     if (relay instanceof Buffer) {
