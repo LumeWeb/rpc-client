@@ -27,7 +27,6 @@ export default abstract class RpcQueryBase {
     this._network = network;
     this._query = query;
     this._options = options;
-    this.init();
   }
 
   get result(): Promise<RPCResponse> {
@@ -52,7 +51,7 @@ export default abstract class RpcQueryBase {
     this._promiseResolve?.(data);
   }
 
-  protected async init() {
+  public run(): this {
     this._promise =
       this._promise ??
       new Promise<any>((resolve) => {
@@ -66,16 +65,17 @@ export default abstract class RpcQueryBase {
         (this._options.queryTimeout || this._network.queryTimeout) * 1000
       );
 
-    await this._network.ready;
+    this._network.ready.then(() => {
+      const promises = [];
 
-    const promises = [];
+      for (const relay of this.getRelays()) {
+        promises.push(this.queryRelay(relay));
+      }
 
-    for (const relay of this.getRelays()) {
-      promises.push(this.queryRelay(relay));
-    }
+      Promise.allSettled(promises).then(() => this.checkResponses());
+    });
 
-    await Promise.allSettled(promises);
-    this.checkResponses();
+    return this;
   }
 
   protected async queryRelay(relay: string | Buffer): Promise<any> {

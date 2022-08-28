@@ -107,7 +107,7 @@ export default class RpcNetwork {
         bypassCache: bypassCache || this._bypassCache,
       },
       options
-    );
+    ).run();
   }
 
   public streamingQuery(
@@ -123,7 +123,7 @@ export default class RpcNetwork {
       relay,
       { method, module, data },
       { streamHandler, ...options }
-    );
+    ).run();
   }
 
   public simpleQuery(
@@ -142,6 +142,6 @@ export default class RpcNetwork {
         data,
       },
       options
-    );
+    ).run();
   }
 }

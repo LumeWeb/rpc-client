@@ -69,7 +69,7 @@ export default class WisdomRpcQuery extends RpcQueryBase {
       return;
     }
 
-    this.init();
+    this.run();
   }
 
   protected getRelays(): string[] | [] {
