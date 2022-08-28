@@ -14,7 +14,6 @@ export default class SimpleRpcQuery extends RpcQueryBase {
   ) {
     super(network, query, options);
     this._relay = relay;
-    this.init();
   }
 
   protected checkResponses(): void {
