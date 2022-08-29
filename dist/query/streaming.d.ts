@@ -1,7 +1,7 @@
 /// <reference types="node" />
 import SimpleRpcQuery from "./simple.js";
 import { Buffer } from "buffer";
-import type { RPCRequest } from "@lumeweb/relay";
+import type { RPCRequest } from "@lumeweb/relay-types";
 import RpcNetwork from "../network.js";
 import { StreamingRpcQueryOptions } from "../types.js";
 export default class StreamingRpcQuery extends SimpleRpcQuery {

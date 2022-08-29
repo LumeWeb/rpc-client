@@ -2,7 +2,7 @@
 import { Buffer } from "buffer";
 import RpcNetwork from "../network.js";
 import { RpcQueryOptions } from "../types.js";
-import type { RPCRequest, RPCResponse } from "@lumeweb/relay";
+import type { RPCRequest, RPCResponse } from "@lumeweb/relay-types";
 export default abstract class RpcQueryBase {
   protected _network: RpcNetwork;
   protected _query: RPCRequest;
