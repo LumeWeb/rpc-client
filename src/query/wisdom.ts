@@ -5,6 +5,13 @@ import type { RPCResponse } from "@lumeweb/relay-types";
 import { blake2b } from "libskynet";
 import { ERR_MAX_TRIES_HIT } from "../error.js";
 
+function flatHash(data: any) {
+  const flattenedData = flatten(data).sort();
+  return Buffer.from(
+    blake2b(Buffer.from(JSON.stringify(flattenedData)))
+  ).toString("hex");
+}
+
 export default class WisdomRpcQuery extends RpcQueryBase {
   private _maxTries = 3;
   private _tries = 0;
@@ -16,20 +23,13 @@ export default class WisdomRpcQuery extends RpcQueryBase {
     type ResponseGroup = { [response: string]: number };
 
     const responseObjects = responseStoreData.reduce((output: any, item) => {
-      const itemFlattened = flatten(item?.data).sort();
-
-      const hash = Buffer.from(
-        blake2b(Buffer.from(JSON.stringify(itemFlattened)))
-      ).toString("hex");
+      const hash = flatHash(item?.data);
       output[hash] = item?.data;
       return output;
     }, {});
     const responses: ResponseGroup = responseStoreData.reduce(
       (output: ResponseGroup, item) => {
-        const itemFlattened = flatten(item?.data).sort();
-        const hash = Buffer.from(
-          blake2b(Buffer.from(JSON.stringify(itemFlattened)))
-        ).toString("hex");
+        const hash = flatHash(item?.data);
         output[hash] = output[hash] ?? 0;
         output[hash]++;
         return output;
