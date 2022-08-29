@@ -3,6 +3,10 @@ import { flatten } from "../util.js";
 import { Buffer } from "buffer";
 import { blake2b } from "libskynet";
 import { ERR_MAX_TRIES_HIT } from "../error.js";
+function flatHash(data) {
+    const flattenedData = flatten(data).sort();
+    return Buffer.from(blake2b(Buffer.from(JSON.stringify(flattenedData)))).toString("hex");
+}
 export default class WisdomRpcQuery extends RpcQueryBase {
     _maxTries = 3;
     _tries = 0;
@@ -10,14 +14,12 @@ export default class WisdomRpcQuery extends RpcQueryBase {
         const responseStore = this._responses;
         const responseStoreData = Object.values(responseStore);
         const responseObjects = responseStoreData.reduce((output, item) => {
-            const itemFlattened = flatten(item?.data).sort();
-            const hash = Buffer.from(blake2b(Buffer.from(JSON.stringify(itemFlattened)))).toString("hex");
+            const hash = flatHash(item?.data);
             output[hash] = item?.data;
             return output;
         }, {});
         const responses = responseStoreData.reduce((output, item) => {
-            const itemFlattened = flatten(item?.data).sort();
-            const hash = Buffer.from(blake2b(Buffer.from(JSON.stringify(itemFlattened)))).toString("hex");
+            const hash = flatHash(item?.data);
             output[hash] = output[hash] ?? 0;
             output[hash]++;
             return output;
@@ -35,7 +37,7 @@ export default class WisdomRpcQuery extends RpcQueryBase {
                     }
                     response = { error: ERR_MAX_TRIES_HIT };
                 }
-                this.resolve(response);
+                this.resolve({ data: response });
                 break;
             }
         }
