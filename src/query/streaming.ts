@@ -3,8 +3,7 @@ import { Buffer } from "buffer";
 import { isPromise } from "../util.js";
 import { clearTimeout, setTimeout } from "timers";
 import { pack, unpack } from "msgpackr";
-import type { RPCRequest } from "@lumeweb/relay";
-import { RPCResponse } from "@lumeweb/relay";
+import type { RPCRequest, RPCResponse } from "@lumeweb/relay-types";
 import RpcNetwork from "../network.js";
 import { StreamingRpcQueryOptions } from "../types.js";
 

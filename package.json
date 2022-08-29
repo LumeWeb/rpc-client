@@ -8,7 +8,7 @@
         "build": "rimraf dist && tsc"
     },
     "devDependencies": {
-        "@lumeweb/relay": "https://github.com/LumeWeb/relay.git",
+        "@lumeweb/relay-types": "https://github.com/LumeWeb/relay-types.git",
         "@types/json-stable-stringify": "^1.0.34",
         "@types/node": "^18.0.0",
         "prettier": "^2.7.1",

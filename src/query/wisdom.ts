@@ -1,7 +1,7 @@
 import RpcQueryBase from "./base.js";
 import { flatten } from "../util.js";
 import { Buffer } from "buffer";
-import type { RPCResponse } from "@lumeweb/relay";
+import type { RPCResponse } from "@lumeweb/relay-types";
 import { blake2b } from "libskynet";
 import { ERR_MAX_TRIES_HIT } from "../error.js";
 
