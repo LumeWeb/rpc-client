@@ -35,7 +35,6 @@ export default class StreamingRpcQuery extends SimpleRpcQuery {
                 if (timer && timer.close) {
                     clearTimeout(timer);
                 }
-                socket.end();
                 const response = unpack(res);
                 if (response && response.error) {
                     this._errors[relay] = response.error;
@@ -44,6 +43,7 @@ export default class StreamingRpcQuery extends SimpleRpcQuery {
                 if (response?.data.done) {
                     this._responses[relay] = {};
                     resolve(null);
+                    socket.end();
                     return;
                 }
                 this._options.streamHandler(response?.data.data);
