@@ -46,6 +46,7 @@ export default class RpcNetwork {
     method: string,
     module: string,
     data?: object | any[],
+    bypassCache?: boolean,
     options?: RpcQueryOptions
   ): SimpleRpcQuery;
 }

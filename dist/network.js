@@ -76,11 +76,12 @@ export default class RpcNetwork {
     streamingQuery(relay, method, module, streamHandler, data = {}, options = {}) {
         return new StreamingRpcQuery(this, relay, { method, module, data }, { streamHandler, ...options }).run();
     }
-    simpleQuery(relay, method, module, data = {}, options = {}) {
+    simpleQuery(relay, method, module, data = {}, bypassCache = false, options = {}) {
         return new SimpleRpcQuery(this, relay, {
             method,
             module,
             data,
+            bypassCache: bypassCache || this._bypassCache,
         }, options).run();
     }
 }
