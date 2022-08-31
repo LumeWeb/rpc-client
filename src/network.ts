@@ -122,7 +122,7 @@ export default class RpcNetwork {
       this,
       relay,
       { method, module, data },
-      { streamHandler, ...options }
+      { ...options, streamHandler }
     ).run();
   }
 
