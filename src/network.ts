@@ -131,6 +131,7 @@ export default class RpcNetwork {
     method: string,
     module: string,
     data: object | any[] = {},
+    bypassCache: boolean = false,
     options: RpcQueryOptions = {}
   ): SimpleRpcQuery {
     return new SimpleRpcQuery(
@@ -140,6 +141,7 @@ export default class RpcNetwork {
         method,
         module,
         data,
+        bypassCache: bypassCache || this._bypassCache,
       },
       options
     ).run();
