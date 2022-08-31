@@ -5,9 +5,13 @@ import { clearTimeout, setTimeout } from "timers";
 import { pack, unpack } from "msgpackr";
 export default class StreamingRpcQuery extends SimpleRpcQuery {
     _options;
+    _canceled = false;
     constructor(network, relay, query, options) {
         super(network, relay, query, options);
         this._options = options;
+    }
+    cancel() {
+        this._canceled = true;
     }
     async queryRelay(relay) {
         let socket;
@@ -30,10 +34,20 @@ export default class StreamingRpcQuery extends SimpleRpcQuery {
         }
         return new Promise((resolve, reject) => {
             let timer;
+            const finish = () => {
+                relay = relay;
+                this._responses[relay] = {};
+                resolve(null);
+                socket.end();
+            };
             socket.on("data", (res) => {
                 relay = relay;
                 if (timer && timer.close) {
                     clearTimeout(timer);
+                }
+                if (this._canceled) {
+                    finish();
+                    return;
                 }
                 const response = unpack(res);
                 if (response && response.error) {
@@ -41,9 +55,7 @@ export default class StreamingRpcQuery extends SimpleRpcQuery {
                     return reject(null);
                 }
                 if (response?.data.done) {
-                    this._responses[relay] = {};
-                    resolve(null);
-                    socket.end();
+                    finish();
                     return;
                 }
                 this._options.streamHandler(response?.data.data);
