@@ -40,13 +40,14 @@ export default class StreamingRpcQuery extends SimpleRpcQuery {
                 resolve(null);
                 socket.end();
             };
-            socket.on("data", (res) => {
+            const listener = (res) => {
                 relay = relay;
                 if (timer && timer.close) {
                     clearTimeout(timer);
                 }
                 if (this._canceled) {
                     socket.write(pack({ cancel: true }));
+                    socket.off("data", listener);
                     finish();
                     return;
                 }
@@ -60,7 +61,8 @@ export default class StreamingRpcQuery extends SimpleRpcQuery {
                     return;
                 }
                 this._options.streamHandler(response?.data.data);
-            });
+            };
+            socket.on("data", listener);
             socket.on("error", (error) => {
                 relay = relay;
                 this._errors[relay] = error;
