@@ -46,6 +46,7 @@ export default class StreamingRpcQuery extends SimpleRpcQuery {
                     clearTimeout(timer);
                 }
                 if (this._canceled) {
+                    socket.write(pack({ cancel: true }));
                     finish();
                     return;
                 }
