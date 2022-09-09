@@ -24,6 +24,19 @@ export default class WisdomRpcQuery extends RpcQueryBase {
             output[hash]++;
             return output;
         }, {});
+        if (!Object.keys(responses).length) {
+            if (Object.keys(this._errors).length) {
+                this.resolve({ error: Object.values(this._errors).pop() });
+                return;
+            }
+            if (this._tries <= this._maxTries) {
+                this._tries++;
+                this.retry();
+                return;
+            }
+            this.resolve({ data: { error: ERR_MAX_TRIES_HIT } });
+            return;
+        }
         for (const responseHash in responses) {
             if (responses[responseHash] / responseStoreData.length >=
                 this._network.majorityThreshold) {
