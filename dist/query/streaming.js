@@ -1,7 +1,7 @@
 import SimpleRpcQuery from "./simple.js";
 import { Buffer } from "buffer";
 import { isPromise } from "../util.js";
-import { clearTimeout, setTimeout } from "timers";
+import { clearTimeout } from "timers";
 import { pack, unpack } from "msgpackr";
 export default class StreamingRpcQuery extends SimpleRpcQuery {
     _options;
@@ -33,7 +33,6 @@ export default class StreamingRpcQuery extends SimpleRpcQuery {
             return;
         }
         return new Promise((resolve, reject) => {
-            let timer;
             const finish = () => {
                 relay = relay;
                 this._responses[relay] = {};
@@ -42,10 +41,9 @@ export default class StreamingRpcQuery extends SimpleRpcQuery {
             };
             const listener = (res) => {
                 relay = relay;
-                if (timer) {
-                    clearTimeout(timer);
-                    timer = null;
+                if (this._timeoutTimer) {
                     clearTimeout(this._timeoutTimer);
+                    this._timeoutTimer = null;
                 }
                 if (this._canceled) {
                     socket.write(pack({ cancel: true }));
@@ -72,10 +70,6 @@ export default class StreamingRpcQuery extends SimpleRpcQuery {
             });
             socket.write("rpc");
             socket.write(pack(this._query));
-            timer = setTimeout(() => {
-                this._errors[relay] = "timeout";
-                reject(null);
-            }, (this._options.relayTimeout || this._network.relayTimeout) * 1000);
         });
     }
 }
