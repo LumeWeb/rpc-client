@@ -57,8 +57,9 @@ export default class StreamingRpcQuery extends SimpleRpcQuery {
 
       const listener = (res: Buffer) => {
         relay = relay as string;
-        if (timer && timer.close) {
+        if (timer) {
           clearTimeout(timer as any);
+          timer = null;
         }
 
         if (this._canceled) {
