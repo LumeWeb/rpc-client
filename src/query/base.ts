@@ -103,8 +103,9 @@ export default abstract class RpcQueryBase {
       let timer: any;
       socket.on("data", (res: Buffer) => {
         relay = relay as string;
-        if (timer && timer.close) {
+        if (timer) {
           clearTimeout(timer as any);
+          timer = null;
         }
         socket.end();
         const response = unpack(res as any) as RPCResponse;
