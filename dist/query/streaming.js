@@ -42,8 +42,10 @@ export default class StreamingRpcQuery extends SimpleRpcQuery {
             };
             const listener = (res) => {
                 relay = relay;
-                if (timer && timer.close) {
+                if (timer) {
                     clearTimeout(timer);
+                    timer = null;
+                    clearTimeout(this._timeoutTimer);
                 }
                 if (this._canceled) {
                     socket.write(pack({ cancel: true }));
