@@ -46,8 +46,6 @@ export default class StreamingRpcQuery extends SimpleRpcQuery {
       return;
     }
     return new Promise((resolve, reject) => {
-      let timer: any;
-
       const finish = () => {
         relay = relay as string;
         this._responses[relay] = {};
@@ -57,10 +55,9 @@ export default class StreamingRpcQuery extends SimpleRpcQuery {
 
       const listener = (res: Buffer) => {
         relay = relay as string;
-        if (timer) {
-          clearTimeout(timer as any);
-          timer = null;
-          clearTimeout(this._timeoutTimer);
+        if (this._timeoutTimer) {
+          clearTimeout(this._timeoutTimer as any);
+          this._timeoutTimer = null;
         }
 
         if (this._canceled) {
@@ -92,10 +89,6 @@ export default class StreamingRpcQuery extends SimpleRpcQuery {
       });
       socket.write("rpc");
       socket.write(pack(this._query));
-      timer = setTimeout(() => {
-        this._errors[relay as string] = "timeout";
-        reject(null);
-      }, (this._options.relayTimeout || this._network.relayTimeout) * 1000) as NodeJS.Timeout;
     });
   }
 }
