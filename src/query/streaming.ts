@@ -60,6 +60,7 @@ export default class StreamingRpcQuery extends SimpleRpcQuery {
         if (timer) {
           clearTimeout(timer as any);
           timer = null;
+          clearTimeout(this._timeoutTimer);
         }
 
         if (this._canceled) {
