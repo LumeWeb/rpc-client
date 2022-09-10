@@ -76,8 +76,9 @@ export default class RpcQueryBase {
             let timer;
             socket.on("data", (res) => {
                 relay = relay;
-                if (timer && timer.close) {
+                if (timer) {
                     clearTimeout(timer);
+                    timer = null;
                 }
                 socket.end();
                 const response = unpack(res);

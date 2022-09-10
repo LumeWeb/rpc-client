@@ -11,7 +11,8 @@ export default class SimpleRpcQuery extends RpcQueryBase {
             return;
         }
         if (Object.keys(this._errors).length) {
-            this.resolve({ error: Object.values(this._errors).pop() });
+            const error = Object.values(this._errors).pop();
+            this.resolve(error, error === "timeout");
             return;
         }
     }
