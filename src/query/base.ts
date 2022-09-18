@@ -14,6 +14,7 @@ export default abstract class RpcQueryBase {
   protected _promise?: Promise<any>;
   protected _timeoutTimer?: any;
   protected _timeout: boolean = false;
+  protected _timeoutCanceled: boolean = false;
   protected _completed: boolean = false;
   protected _responses: { [relay: string]: RPCResponse } = {};
   protected _errors: { [relay: string]: any } = {};
@@ -34,6 +35,9 @@ export default abstract class RpcQueryBase {
   }
 
   private handeTimeout() {
+    if (this._timeoutCanceled) {
+      return;
+    }
     this.resolve(undefined, true);
   }
 
