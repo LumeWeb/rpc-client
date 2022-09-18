@@ -10,6 +10,7 @@ export default abstract class RpcQueryBase {
   protected _promise?: Promise<any>;
   protected _timeoutTimer?: any;
   protected _timeout: boolean;
+  protected _timeoutCanceled: boolean;
   protected _completed: boolean;
   protected _responses: {
     [relay: string]: RPCResponse;

@@ -9,6 +9,7 @@ export default class RpcQueryBase {
     _promise;
     _timeoutTimer;
     _timeout = false;
+    _timeoutCanceled = false;
     _completed = false;
     _responses = {};
     _errors = {};
@@ -22,6 +23,9 @@ export default class RpcQueryBase {
         return this._promise;
     }
     handeTimeout() {
+        if (this._timeoutCanceled) {
+            return;
+        }
         this.resolve(undefined, true);
     }
     resolve(data, timeout = false) {
