@@ -50,7 +50,10 @@ export default class WisdomRpcQuery extends RpcQueryBase {
                     }
                     response = { error: ERR_MAX_TRIES_HIT };
                 }
-                this.resolve({ data: response });
+                else {
+                    response = { data: response };
+                }
+                this.resolve(response);
                 break;
             }
         }
