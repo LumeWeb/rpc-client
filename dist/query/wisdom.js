@@ -64,6 +64,17 @@ export default class WisdomRpcQuery extends RpcQueryBase {
         this.run();
     }
     getRelays() {
-        return this._network.relays;
+        if (this._network.maxRelays === 0 ||
+            this._network.relays.length <= this._network.maxRelays) {
+            return this._network.relays;
+        }
+        const list = [];
+        let available = this._network.relays;
+        while (list.length < this._network.maxRelays) {
+            const item = Math.floor(Math.random() * available.length);
+            list.push(available[item]);
+            available.splice(item, 1);
+        }
+        return list;
     }
 }

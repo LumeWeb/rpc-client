@@ -23,6 +23,9 @@ export default class RpcNetwork {
   private _bypassCache;
   get bypassCache(): boolean;
   set bypassCache(value: boolean);
+  private _maxRelays;
+  get maxRelays(): number;
+  set maxRelays(value: number);
   addRelay(pubkey: string): void;
   removeRelay(pubkey: string): boolean;
   clearRelays(): void;
