@@ -71,6 +71,16 @@ export default class RpcNetwork {
     this._bypassCache = value;
   }
 
+  private _maxRelays: number = 0;
+
+  get maxRelays(): number {
+    return this._maxRelays;
+  }
+
+  set maxRelays(value: number) {
+    this._maxRelays = value;
+  }
+
   public addRelay(pubkey: string): void {
     this._relays.push(pubkey);
     this._relays = [...new Set(this._relays)];
