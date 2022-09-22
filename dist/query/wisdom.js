@@ -70,7 +70,7 @@ export default class WisdomRpcQuery extends RpcQueryBase {
         }
         const list = [];
         let available = this._network.relays;
-        while (list.length < this._network.maxRelays) {
+        while (list.length <= this._network.maxRelays) {
             const item = Math.floor(Math.random() * available.length);
             list.push(available[item]);
             available.splice(item, 1);
