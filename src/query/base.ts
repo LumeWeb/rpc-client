@@ -81,7 +81,7 @@ export default abstract class RpcQueryBase {
       await this._network.ready;
       await this._run();
     } catch (e: any) {
-      this._promiseResolve?.({ error: e.message });
+      this._promiseResolve?.({ error: e?.message || e?.error });
     }
   }
 
