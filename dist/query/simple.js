@@ -1,5 +1,5 @@
 import b4a from "b4a";
-import { isPromise, validateTimestampedResponse, } from "../util.js";
+import { hashQuery, isPromise, validateTimestampedResponse, } from "../util.js";
 import RPC from "@lumeweb/rpc";
 import { ERR_INVALID_SIGNATURE } from "../error.js";
 import RpcQueryBase from "./base.js";
@@ -26,6 +26,17 @@ export default class SimpleRpcQuery extends RpcQueryBase {
         }
         await socket.opened;
         const rpc = new RPC(socket);
+        if (this._query.bypassCache) {
+            delete this._query.bypassCache;
+            await this.queryRpc(rpc, {
+                module: "rpc",
+                method: "clear_cached_item",
+                data: hashQuery(this._query),
+            });
+        }
+        if ("bypassCache" in this._query) {
+            delete this._query.bypassCache;
+        }
         try {
             await this.queryRpc(rpc, this._query);
         }

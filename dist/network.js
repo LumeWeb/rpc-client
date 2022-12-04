@@ -1,11 +1,13 @@
 // @ts-ignore
 import DHT from "@hyperswarm/dht";
-import SimpleRpcQuery from "./query/simple.js";
-import WisdomRpcQuery from "./query/wisdom.js";
-import ClearCacheRpcQuery from "./query/clearCache.js";
+import RpcNetworkQueryFactory from "./query/index.js";
 export default class RpcNetwork {
     constructor(dht = new DHT()) {
         this._dht = dht;
+    }
+    _factory = new RpcNetworkQueryFactory(this);
+    get factory() {
+        return this._factory;
     }
     _dht;
     get dht() {
@@ -71,28 +73,5 @@ export default class RpcNetwork {
     }
     clearRelays() {
         this._relays = [];
-    }
-    wisdomQuery(method, module, data = {}, bypassCache = false, options = {}) {
-        return new WisdomRpcQuery(this, {
-            method,
-            module,
-            data,
-            bypassCache: bypassCache || this._bypassCache,
-        }, options).run();
-    }
-    simpleQuery(relay, method, module, data = {}, bypassCache = false, options = {}) {
-        return new SimpleRpcQuery(this, relay, {
-            method,
-            module,
-            data,
-            bypassCache: bypassCache || this._bypassCache,
-        }, options).run();
-    }
-    clearCacheQuery(relays, method, module, data = {}, options = {}) {
-        return new ClearCacheRpcQuery(this, relays, {
-            method,
-            module,
-            data,
-        }, options).run();
     }
 }

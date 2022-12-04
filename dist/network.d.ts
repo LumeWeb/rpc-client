@@ -1,8 +1,8 @@
-import SimpleRpcQuery from "./query/simple.js";
-import WisdomRpcQuery from "./query/wisdom.js";
-import { RpcQueryOptions } from "./types.js";
+import RpcNetworkQueryFactory from "./query/index.js";
 export default class RpcNetwork {
   constructor(dht?: any);
+  private _factory;
+  get factory(): RpcNetworkQueryFactory;
   private _dht;
   get dht(): any;
   private _majorityThreshold;
@@ -27,27 +27,5 @@ export default class RpcNetwork {
   addRelay(pubkey: string): void;
   removeRelay(pubkey: string): boolean;
   clearRelays(): void;
-  wisdomQuery(
-    method: string,
-    module: string,
-    data?: object | any[],
-    bypassCache?: boolean,
-    options?: {}
-  ): WisdomRpcQuery;
-  simpleQuery(
-    relay: string,
-    method: string,
-    module: string,
-    data?: object | any[],
-    bypassCache?: boolean,
-    options?: RpcQueryOptions
-  ): SimpleRpcQuery;
-  clearCacheQuery(
-    relays: string[],
-    method: string,
-    module: string,
-    data?: object | any[],
-    options?: RpcQueryOptions
-  ): SimpleRpcQuery;
 }
 //# sourceMappingURL=network.d.ts.map

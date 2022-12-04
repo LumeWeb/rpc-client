@@ -4,6 +4,7 @@ import { RpcQueryOptions } from "../types.js";
 import RpcQueryBase from "./base.js";
 export default class SimpleRpcQuery extends RpcQueryBase {
   protected _relay: string;
+  protected _query: ClientRPCRequest;
   constructor(
     network: RpcNetwork,
     relay: string,
