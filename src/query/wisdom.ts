@@ -60,6 +60,20 @@ export default class WisdomRpcQuery extends RpcQueryBase {
       throw new Error(ERR_NO_RELAYS);
     }
 
+    if (this._query.bypassCache) {
+      delete this._query.bypassCache;
+      const clearCacheQuery = this._network.clearCacheQuery(
+        relays,
+        this._query.method,
+        this._query.module,
+        this._query.data
+      );
+      await clearCacheQuery.result;
+    }
+
+    if ("bypassCache" in this._query) {
+      delete this._query.bypassCache;
+    }
     return this.queryRpc(activeRelay, {
       module: "rpc",
       method: "broadcast_request",
