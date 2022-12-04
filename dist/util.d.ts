@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import type { RPCResponse } from "@lumeweb/relay-types";
+import type { RPCRequest, RPCResponse } from "@lumeweb/relay-types";
 export declare function isPromise(obj: Promise<any>): boolean;
 export declare function flatten(target: any, opts?: any): any[];
 export declare function validateResponse(
@@ -11,4 +11,5 @@ export declare function validateTimestampedResponse(
   relay: Buffer,
   response: RPCResponse
 ): boolean;
+export declare function hashQuery(query: RPCRequest): string;
 //# sourceMappingURL=util.d.ts.map

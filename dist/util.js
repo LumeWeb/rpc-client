@@ -2,6 +2,8 @@
 import stringify from "json-stringify-deterministic";
 // @ts-ignore
 import crypto from "hypercore-crypto";
+// @ts-ignore
+import sodium from "sodium-universal";
 import b4a from "b4a";
 export function isPromise(obj) {
     return (!!obj &&
@@ -60,4 +62,14 @@ export function validateResponse(relay, response, timestamped = false) {
 }
 export function validateTimestampedResponse(relay, response) {
     return validateResponse(relay, response, true);
+}
+export function hashQuery(query) {
+    const clonedQuery = {
+        module: query.module,
+        method: query.method,
+        data: query.data,
+    };
+    const queryHash = Buffer.allocUnsafe(32);
+    sodium.crypto_generichash(queryHash, Buffer.from(stringify(clonedQuery)));
+    return queryHash.toString("hex");
 }

@@ -1,24 +1,20 @@
 import { clearTimeout } from "timers";
 import b4a from "b4a";
-import { flatten, isPromise, validateResponse, validateTimestampedResponse, } from "../util.js";
-import RPC from "@lumeweb/rpc";
+import { flatten, validateResponse, validateTimestampedResponse, } from "../util.js";
 import { blake2b } from "libskynet";
 import { ERR_INVALID_SIGNATURE, ERR_NO_RELAYS } from "../error.js";
 import RpcQueryBase from "./base.js";
+import { getActiveRelay, setupRelay } from "../sharedRelay.js";
 function flatHash(data) {
     const flattenedData = flatten(data).sort();
     return Buffer.from(blake2b(Buffer.from(JSON.stringify(flattenedData)))).toString("hex");
 }
 export default class WisdomRpcQuery extends RpcQueryBase {
-    static _activeRelay;
-    static get activeRelay() {
-        return this._activeRelay;
-    }
     get result() {
         return this._promise;
     }
     async _run() {
-        await this.setupRelay();
+        await setupRelay(this._network);
         await this.queryRelay();
         await this.checkResponse();
     }
@@ -34,10 +30,18 @@ export default class WisdomRpcQuery extends RpcQueryBase {
         this._promiseResolve?.(data);
     }
     async queryRelay() {
-        let activeRelay = WisdomRpcQuery.activeRelay;
+        let activeRelay = getActiveRelay();
         let relays = this.getRelays();
         if (!relays.length) {
             throw new Error(ERR_NO_RELAYS);
+        }
+        if (this._query.bypassCache) {
+            delete this._query.bypassCache;
+            const clearCacheQuery = this._network.clearCacheQuery(relays, this._query.method, this._query.module, this._query.data);
+            await clearCacheQuery.result;
+        }
+        if ("bypassCache" in this._query) {
+            delete this._query.bypassCache;
         }
         return this.queryRpc(activeRelay, {
             module: "rpc",
@@ -53,7 +57,9 @@ export default class WisdomRpcQuery extends RpcQueryBase {
             this.resolve({ error: this._error });
             return;
         }
-        if (!validateResponse(WisdomRpcQuery.activeRelay.stream.remotePublicKey, this._response)) {
+        if (!validateResponse(
+        // @ts-ignore
+        getActiveRelay().stream.remotePublicKey, this._response)) {
             this.resolve({ error: ERR_INVALID_SIGNATURE });
             return;
         }
@@ -106,24 +112,5 @@ export default class WisdomRpcQuery extends RpcQueryBase {
             available.splice(item, 1);
         }
         return list;
-    }
-    async setupRelay() {
-        let active = WisdomRpcQuery.activeRelay;
-        let relays = this._network.relays;
-        if (!active) {
-            if (!relays.length) {
-                throw new Error(ERR_NO_RELAYS);
-            }
-            let relay = relays[Math.floor(Math.random() * relays.length)];
-            let socket = this._network.dht.connect(b4a.from(relay, "hex"));
-            if (isPromise(socket)) {
-                socket = await socket;
-            }
-            await socket.opened;
-            WisdomRpcQuery._activeRelay = new RPC(socket);
-            socket.once("close", () => {
-                WisdomRpcQuery._activeRelay = undefined;
-            });
-        }
     }
 }
