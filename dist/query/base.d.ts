@@ -1,8 +1,11 @@
 /// <reference types="node" />
-import { Buffer } from "buffer";
 import RpcNetwork from "../network.js";
 import { RpcQueryOptions } from "../types.js";
-import type { RPCRequest, RPCResponse } from "@lumeweb/relay-types";
+import type {
+  ClientRPCRequest,
+  RPCRequest,
+  RPCResponse,
+} from "@lumeweb/relay-types";
 export default abstract class RpcQueryBase {
   protected _network: RpcNetwork;
   protected _query: RPCRequest;
@@ -11,24 +14,21 @@ export default abstract class RpcQueryBase {
   protected _timeoutTimer?: any;
   protected _timeout: boolean;
   protected _completed: boolean;
-  protected _responses: {
-    [relay: string]: RPCResponse;
-  };
-  protected _errors: {
-    [relay: string]: any;
-  };
+  protected _response?: RPCResponse;
+  protected _error?: string;
   protected _promiseResolve?: (data: any) => void;
   constructor(
     network: RpcNetwork,
-    query: RPCRequest,
+    query: ClientRPCRequest | RPCRequest,
     options?: RpcQueryOptions
   );
   get result(): Promise<RPCResponse>;
-  private handeTimeout;
+  protected handeTimeout(): void;
   protected resolve(data?: RPCResponse, timeout?: boolean): void;
   run(): this;
-  protected queryRelay(relay: string | Buffer): Promise<any>;
-  protected abstract checkResponses(): void;
-  protected abstract getRelays(): string[] | Buffer[];
+  private _doRun;
+  protected setupRelayTimeout(reject: Function): NodeJS.Timeout;
+  protected abstract _run(): void;
+  protected queryRpc(rpc: any, request: RPCRequest): Promise<unknown>;
 }
 //# sourceMappingURL=base.d.ts.map

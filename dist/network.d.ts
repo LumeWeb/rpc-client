@@ -1,10 +1,10 @@
-/// <reference types="node" />
-import WisdomRpcQuery from "./query/wisdom.js";
-import StreamingRpcQuery from "./query/streaming.js";
-import { RpcQueryOptions, StreamHandlerFunction } from "./types.js";
+import RPC from "@lumeweb/rpc";
 import SimpleRpcQuery from "./query/simple.js";
+import WisdomRpcQuery from "./query/wisdom.js";
 export default class RpcNetwork {
   constructor(dht?: any);
+  private _activeRelay?;
+  get activeRelay(): RPC;
   private _dht;
   get dht(): any;
   private _majorityThreshold;
@@ -34,23 +34,15 @@ export default class RpcNetwork {
     module: string,
     data?: object | any[],
     bypassCache?: boolean,
-    options?: RpcQueryOptions
+    options?: {}
   ): WisdomRpcQuery;
-  streamingQuery(
-    relay: Buffer | string,
-    method: string,
-    module: string,
-    streamHandler: StreamHandlerFunction,
-    data?: object | any[],
-    options?: RpcQueryOptions
-  ): StreamingRpcQuery;
   simpleQuery(
-    relay: Buffer | string,
+    relay: string,
     method: string,
     module: string,
-    data?: object | any[],
-    bypassCache?: boolean,
-    options?: RpcQueryOptions
+    data: object | any[] | undefined,
+    bypassCache: boolean | undefined,
+    options: {}
   ): SimpleRpcQuery;
 }
 //# sourceMappingURL=network.d.ts.map

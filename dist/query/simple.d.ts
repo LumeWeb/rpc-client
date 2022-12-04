@@ -1,18 +1,17 @@
-/// <reference types="node" />
-import RpcQueryBase from "./base.js";
 import RpcNetwork from "../network.js";
-import type { RPCRequest } from "@lumeweb/relay-types";
+import { ClientRPCRequest } from "@lumeweb/relay-types";
 import { RpcQueryOptions } from "../types.js";
-import type { Buffer } from "buffer";
+import RpcQueryBase from "./base.js";
 export default class SimpleRpcQuery extends RpcQueryBase {
-  private _relay;
+  protected _relay: string;
   constructor(
     network: RpcNetwork,
-    relay: string | Buffer,
-    query: RPCRequest,
+    relay: string,
+    query: ClientRPCRequest,
     options: RpcQueryOptions
   );
-  protected checkResponses(): void;
-  protected getRelays(): string[] | Buffer[];
+  protected _run(): Promise<void>;
+  protected queryRelay(): Promise<any>;
+  protected checkResponses(): Promise<void>;
 }
 //# sourceMappingURL=simple.d.ts.map

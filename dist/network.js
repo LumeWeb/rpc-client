@@ -1,11 +1,14 @@
-import WisdomRpcQuery from "./query/wisdom.js";
 // @ts-ignore
 import DHT from "@hyperswarm/dht";
-import StreamingRpcQuery from "./query/streaming.js";
 import SimpleRpcQuery from "./query/simple.js";
+import WisdomRpcQuery from "./query/wisdom.js";
 export default class RpcNetwork {
     constructor(dht = new DHT()) {
         this._dht = dht;
+    }
+    _activeRelay;
+    get activeRelay() {
+        return this._activeRelay;
     }
     _dht;
     get dht() {
@@ -80,10 +83,7 @@ export default class RpcNetwork {
             bypassCache: bypassCache || this._bypassCache,
         }, options).run();
     }
-    streamingQuery(relay, method, module, streamHandler, data = {}, options = {}) {
-        return new StreamingRpcQuery(this, relay, { method, module, data }, { ...options, streamHandler }).run();
-    }
-    simpleQuery(relay, method, module, data = {}, bypassCache = false, options = {}) {
+    simpleQuery(relay, method, module, data = {}, bypassCache = false, options) {
         return new SimpleRpcQuery(this, relay, {
             method,
             module,
