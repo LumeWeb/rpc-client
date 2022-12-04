@@ -1,4 +1,5 @@
 import {
+  ClientRPCRequest,
   RPCBroadcastRequest,
   RPCBroadcastResponse,
   RPCRequest,
@@ -12,10 +13,10 @@ import {
   validateResponse,
   validateTimestampedResponse,
 } from "../util.js";
-import RPC from "@lumeweb/rpc";
 import { blake2b } from "libskynet";
 import { ERR_INVALID_SIGNATURE, ERR_NO_RELAYS } from "../error.js";
 import RpcQueryBase from "./base.js";
+import { getActiveRelay, setupRelay } from "../sharedRelay.js";
 
 function flatHash(data: any) {
   const flattenedData = flatten(data).sort();
@@ -26,18 +27,13 @@ function flatHash(data: any) {
 
 export default class WisdomRpcQuery extends RpcQueryBase {
   protected declare _response?: RPCBroadcastResponse;
-  private static _activeRelay: any;
-
-  static get activeRelay(): any {
-    return this._activeRelay;
-  }
-
+  protected declare _query: ClientRPCRequest;
   get result(): Promise<RPCResponse> {
     return this._promise as Promise<RPCResponse>;
   }
 
   protected async _run(): Promise<void> {
-    await this.setupRelay();
+    await setupRelay(this._network);
     await this.queryRelay();
     await this.checkResponse();
   }
@@ -57,7 +53,7 @@ export default class WisdomRpcQuery extends RpcQueryBase {
   }
 
   protected async queryRelay(): Promise<any> {
-    let activeRelay = WisdomRpcQuery.activeRelay;
+    let activeRelay = getActiveRelay();
     let relays = this.getRelays();
 
     if (!relays.length) {
@@ -82,7 +78,8 @@ export default class WisdomRpcQuery extends RpcQueryBase {
 
     if (
       !validateResponse(
-        WisdomRpcQuery.activeRelay.stream.remotePublicKey,
+        // @ts-ignore
+        getActiveRelay().stream.remotePublicKey,
         this._response as RPCResponse
       )
     ) {
@@ -146,7 +143,7 @@ export default class WisdomRpcQuery extends RpcQueryBase {
     }
   }
 
-  protected getRelays(): string[] | [] {
+  protected getRelays(): string[] {
     if (
       this._network.maxRelays === 0 ||
       this._network.relays.length <= this._network.maxRelays
@@ -164,28 +161,5 @@ export default class WisdomRpcQuery extends RpcQueryBase {
     }
 
     return list;
-  }
-
-  private async setupRelay() {
-    let active = WisdomRpcQuery.activeRelay;
-    let relays = this._network.relays;
-
-    if (!active) {
-      if (!relays.length) {
-        throw new Error(ERR_NO_RELAYS);
-      }
-
-      let relay = relays[Math.floor(Math.random() * relays.length)];
-      let socket = this._network.dht.connect(b4a.from(relay, "hex"));
-      if (isPromise(socket)) {
-        socket = await socket;
-      }
-      await socket.opened;
-
-      WisdomRpcQuery._activeRelay = new RPC(socket);
-      socket.once("close", () => {
-        WisdomRpcQuery._activeRelay = undefined;
-      });
-    }
   }
 }
