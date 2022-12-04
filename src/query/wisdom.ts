@@ -62,12 +62,10 @@ export default class WisdomRpcQuery extends RpcQueryBase {
 
     if (this._query.bypassCache) {
       delete this._query.bypassCache;
-      const clearCacheQuery = this._network.clearCacheQuery(
+      const clearCacheQuery = this._network.factory.clearCache({
         relays,
-        this._query.method,
-        this._query.module,
-        this._query.data
-      );
+        query: this._query,
+      });
       await clearCacheQuery.result;
     }
 

@@ -7,10 +7,18 @@ import SimpleRpcQuery from "./query/simple.js";
 import WisdomRpcQuery from "./query/wisdom.js";
 import ClearCacheRpcQuery from "./query/clearCache.js";
 import { RpcQueryOptions } from "./types.js";
+import { ClientRPCRequest } from "@lumeweb/relay-types";
+import RpcNetworkQueryFactory from "./query/index.js";
 
 export default class RpcNetwork {
   constructor(dht = new DHT()) {
     this._dht = dht;
+  }
+
+  private _factory = new RpcNetworkQueryFactory(this);
+
+  get factory(): RpcNetworkQueryFactory {
+    return this._factory;
   }
 
   private _dht: typeof DHT;
@@ -103,63 +111,5 @@ export default class RpcNetwork {
 
   public clearRelays(): void {
     this._relays = [];
-  }
-
-  public wisdomQuery(
-    method: string,
-    module: string,
-    data: object | any[] = {},
-    bypassCache: boolean = false,
-    options = {}
-  ): WisdomRpcQuery {
-    return new WisdomRpcQuery(
-      this,
-      {
-        method,
-        module,
-        data,
-        bypassCache: bypassCache || this._bypassCache,
-      },
-      options
-    ).run();
-  }
-  public simpleQuery(
-    relay: string,
-    method: string,
-    module: string,
-    data: object | any[] = {},
-    bypassCache: boolean = false,
-    options: RpcQueryOptions = {}
-  ): SimpleRpcQuery {
-    return new SimpleRpcQuery(
-      this,
-      relay,
-      {
-        method,
-        module,
-        data,
-        bypassCache: bypassCache || this._bypassCache,
-      },
-      options
-    ).run();
-  }
-
-  public clearCacheQuery(
-    relays: string[],
-    method: string,
-    module: string,
-    data: object | any[] = {},
-    options: RpcQueryOptions = {}
-  ): SimpleRpcQuery {
-    return new ClearCacheRpcQuery(
-      this,
-      relays,
-      {
-        method,
-        module,
-        data,
-      },
-      options
-    ).run();
   }
 }
