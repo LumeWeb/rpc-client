@@ -1,5 +1,5 @@
 {
-    "name": "@lumeweb/dht-rpc-client",
+    "name": "@lumeweb/rpc-client",
     "type": "module",
     "version": "0.1.0",
     "description": "",
