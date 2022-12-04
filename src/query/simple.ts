@@ -9,6 +9,7 @@ import { RpcQueryOptions } from "../types.js";
 import { clearTimeout, setTimeout } from "timers";
 import b4a from "b4a";
 import {
+  hashQuery,
   isPromise,
   validateResponse,
   validateTimestampedResponse,
@@ -50,6 +51,19 @@ export default class SimpleRpcQuery extends RpcQueryBase {
     await socket.opened;
 
     const rpc = new RPC(socket);
+
+    if (this._query.bypassCache) {
+      delete this._query.bypassCache;
+      await this.queryRpc(rpc, {
+        module: "rpc",
+        method: "clear_cached_item",
+        data: hashQuery(this._query),
+      });
+    }
+
+    if ("bypassCache" in this._query) {
+      delete this._query.bypassCache;
+    }
 
     try {
       await this.queryRpc(rpc, this._query);
