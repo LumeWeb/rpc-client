@@ -50,7 +50,7 @@ export default class RpcQueryBase {
             await this._run();
         }
         catch (e) {
-            this._promiseResolve?.({ error: e.message });
+            this._promiseResolve?.({ error: e?.message || e?.error });
         }
     }
     setupRelayTimeout(reject) {
