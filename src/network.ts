@@ -5,6 +5,8 @@ import RPC from "@lumeweb/rpc";
 import { isPromise } from "./util.js";
 import SimpleRpcQuery from "./query/simple.js";
 import WisdomRpcQuery from "./query/wisdom.js";
+import ClearCacheRpcQuery from "./query/clearCache.js";
+import { RpcQueryOptions } from "./types.js";
 
 export default class RpcNetwork {
   constructor(dht = new DHT()) {
@@ -127,7 +129,7 @@ export default class RpcNetwork {
     module: string,
     data: object | any[] = {},
     bypassCache: boolean = false,
-    options: {}
+    options: RpcQueryOptions = {}
   ): SimpleRpcQuery {
     return new SimpleRpcQuery(
       this,
@@ -137,6 +139,25 @@ export default class RpcNetwork {
         module,
         data,
         bypassCache: bypassCache || this._bypassCache,
+      },
+      options
+    ).run();
+  }
+
+  public clearCacheQuery(
+    relays: string[],
+    method: string,
+    module: string,
+    data: object | any[] = {},
+    options: RpcQueryOptions = {}
+  ): SimpleRpcQuery {
+    return new ClearCacheRpcQuery(
+      this,
+      relays,
+      {
+        method,
+        module,
+        data,
       },
       options
     ).run();
