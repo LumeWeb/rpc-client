@@ -3,6 +3,8 @@ import stringify from "json-stringify-deterministic";
 import type { RPCRequest, RPCResponse } from "@lumeweb/relay-types";
 // @ts-ignore
 import crypto from "hypercore-crypto";
+// @ts-ignore
+import sodium from "sodium-universal";
 import b4a from "b4a";
 
 export function isPromise(obj: Promise<any>) {
@@ -90,4 +92,16 @@ export function validateTimestampedResponse(
   response: RPCResponse
 ): boolean {
   return validateResponse(relay, response, true);
+}
+
+export function hashQuery(query: RPCRequest): string {
+  const clonedQuery: RPCRequest = {
+    module: query.module,
+    method: query.method,
+    data: query.data,
+  };
+  const queryHash = Buffer.allocUnsafe(32);
+  sodium.crypto_generichash(queryHash, Buffer.from(stringify(clonedQuery)));
+
+  return queryHash.toString("hex");
 }
