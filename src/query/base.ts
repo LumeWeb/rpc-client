@@ -4,7 +4,13 @@ import { Buffer } from "buffer";
 import { isPromise } from "../util.js";
 import RpcNetwork from "../network.js";
 import { RpcQueryOptions } from "../types.js";
-import type { RPCRequest, RPCResponse } from "@lumeweb/relay-types";
+import type {
+  ClientRPCRequest,
+  RPCRequest,
+  RPCResponse,
+} from "@lumeweb/relay-types";
+import RPC from "@lumeweb/rpc";
+import { RPCBroadcastRequest } from "@lumeweb/relay-types";
 
 export default abstract class RpcQueryBase {
   protected _network: RpcNetwork;
@@ -15,13 +21,13 @@ export default abstract class RpcQueryBase {
   protected _timeoutTimer?: any;
   protected _timeout: boolean = false;
   protected _completed: boolean = false;
-  protected _responses: { [relay: string]: RPCResponse } = {};
-  protected _errors: { [relay: string]: any } = {};
+  protected _response?: RPCResponse;
+  protected _error?: string;
   protected _promiseResolve?: (data: any) => void;
 
   constructor(
     network: RpcNetwork,
-    query: RPCRequest,
+    query: ClientRPCRequest | RPCRequest,
     options: RpcQueryOptions = {}
   ) {
     this._network = network;
@@ -33,7 +39,7 @@ export default abstract class RpcQueryBase {
     return this._promise as Promise<RPCResponse>;
   }
 
-  private handeTimeout() {
+  protected handeTimeout() {
     this.resolve(undefined, true);
   }
 
@@ -62,75 +68,55 @@ export default abstract class RpcQueryBase {
       this._timeoutTimer ??
       setTimeout(
         this.handeTimeout.bind(this),
-        (this._options.queryTimeout || this._network.queryTimeout) * 1000
+        (this._options?.queryTimeout || this._network.queryTimeout) * 1000
       );
 
-    this._network.ready.then(() => {
-      const promises = [];
-
-      for (const relay of this.getRelays()) {
-        promises.push(this.queryRelay(relay));
-      }
-
-      Promise.allSettled(promises).then(() => this.checkResponses());
-    });
+    this._doRun();
 
     return this;
   }
 
-  protected async queryRelay(relay: string | Buffer): Promise<any> {
-    let socket: any;
-
-    let relayKey: Buffer = relay as Buffer;
-
-    if (typeof relay === "string") {
-      relayKey = Buffer.from(relay, "hex");
-    }
-    if (relay instanceof Buffer) {
-      relayKey = relay;
-      relay = relay.toString("hex");
-    }
-
+  private async _doRun() {
     try {
-      socket = this._network.dht.connect(relayKey);
-      if (isPromise(socket)) {
-        socket = await socket;
-      }
-    } catch (e) {
-      return;
+      await this._network.ready;
+      await this._run();
+    } catch (e: any) {
+      this._promiseResolve?.({ error: e.message });
     }
-    return new Promise((resolve, reject) => {
-      let timer: any;
-      socket.on("data", (res: Buffer) => {
-        relay = relay as string;
-        if (timer) {
-          clearTimeout(timer as any);
-          timer = null;
-        }
-        socket.end();
-        const response = unpack(res as any) as RPCResponse;
-        if (response && response.error) {
-          this._errors[relay] = response.error;
-          return reject(null);
-        }
-        this._responses[relay] = response;
-        resolve(null);
-      });
-      socket.on("error", (error: any) => {
-        relay = relay as string;
-        this._errors[relay] = error;
-        reject({ error });
-      });
-      socket.write("rpc");
-      socket.write(pack(this._query));
-      timer = setTimeout(() => {
-        this._errors[relay as string] = "timeout";
-        reject(null);
-      }, (this._options.relayTimeout || this._network.relayTimeout) * 1000) as NodeJS.Timeout;
-    });
   }
 
-  protected abstract checkResponses(): void;
+  protected setupRelayTimeout(reject: Function): NodeJS.Timeout {
+    return setTimeout(() => {
+      this._error = "timeout";
+      reject("timeout");
+    }, (this._options.relayTimeout || this._network.relayTimeout) * 1000) as NodeJS.Timeout;
+  }
 
-  protected abstract getRelays(): string[] | Buffer[];
+  protected abstract _run(): void;
+
+  protected async queryRpc(rpc: any, request: RPCRequest) {
+    let timer: NodeJS.Timeout;
+
+    return new Promise((resolve, reject) => {
+      rpc
+        // @ts-ignore
+        .request(`${request.module}.${request.method}`, request.data)
+        .then((resp: any) => {
+          if (resp.error) {
+            throw new Error(resp.error);
+          }
+          clearTimeout(timer as any);
+
+          this._response = resp;
+          resolve(null);
+        })
+        .catch((e: Error) => {
+          this._error = e.message;
+          reject({ error: e.message });
+          clearTimeout(timer as any);
+        });
+
+      timer = this.setupRelayTimeout(reject);
+    });
+  }
 }

@@ -1,13 +1,20 @@
-import WisdomRpcQuery from "./query/wisdom.js";
 // @ts-ignore
 import DHT from "@hyperswarm/dht";
-import StreamingRpcQuery from "./query/streaming.js";
-import { RpcQueryOptions, StreamHandlerFunction } from "./types.js";
+import b4a from "b4a";
+import RPC from "@lumeweb/rpc";
+import { isPromise } from "./util.js";
 import SimpleRpcQuery from "./query/simple.js";
+import WisdomRpcQuery from "./query/wisdom.js";
 
 export default class RpcNetwork {
   constructor(dht = new DHT()) {
     this._dht = dht;
+  }
+
+  private _activeRelay?: RPC;
+
+  get activeRelay(): RPC {
+    return this._activeRelay as RPC;
   }
 
   private _dht: typeof DHT;
@@ -58,6 +65,7 @@ export default class RpcNetwork {
     if (!this._ready) {
       this._ready = this._dht.ready() as Promise<void>;
     }
+
     return this._ready;
   }
 
@@ -106,7 +114,7 @@ export default class RpcNetwork {
     module: string,
     data: object | any[] = {},
     bypassCache: boolean = false,
-    options: RpcQueryOptions = {}
+    options = {}
   ): WisdomRpcQuery {
     return new WisdomRpcQuery(
       this,
@@ -119,30 +127,13 @@ export default class RpcNetwork {
       options
     ).run();
   }
-
-  public streamingQuery(
-    relay: Buffer | string,
-    method: string,
-    module: string,
-    streamHandler: StreamHandlerFunction,
-    data: object | any[] = {},
-    options: RpcQueryOptions = {}
-  ): StreamingRpcQuery {
-    return new StreamingRpcQuery(
-      this,
-      relay,
-      { method, module, data },
-      { ...options, streamHandler }
-    ).run();
-  }
-
   public simpleQuery(
-    relay: Buffer | string,
+    relay: string,
     method: string,
     module: string,
     data: object | any[] = {},
     bypassCache: boolean = false,
-    options: RpcQueryOptions = {}
+    options: {}
   ): SimpleRpcQuery {
     return new SimpleRpcQuery(
       this,

@@ -1,13 +1,18 @@
-import { isArray } from "util";
+// @ts-ignore
+import stringify from "json-stringify-deterministic";
+import type { RPCRequest, RPCResponse } from "@lumeweb/relay-types";
+// @ts-ignore
+import crypto from "hypercore-crypto";
+import b4a from "b4a";
 
-function isBuffer(obj: any): boolean {
+export function isPromise(obj: Promise<any>) {
   return (
-    obj &&
-    obj.constructor &&
-    typeof obj.constructor.isBuffer === "function" &&
-    obj.constructor.isBuffer(obj)
+    !!obj &&
+    (typeof obj === "object" || typeof obj === "function") &&
+    typeof obj.then === "function"
   );
 }
+
 /*
 Forked from https://github.com/hughsk/flat
  */
@@ -29,7 +34,7 @@ export function flatten(target: any, opts: any = {}): any[] {
       const value = object[key];
       const isarray = opts.safe && Array.isArray(value);
       const type = Object.prototype.toString.call(value);
-      const isbuffer = isBuffer(value);
+      const isbuffer = b4a.isBuffer(value);
       const isobject = type === "[object Object]" || type === "[object Array]";
 
       const newKey = prev
@@ -55,10 +60,34 @@ export function flatten(target: any, opts: any = {}): any[] {
   return output;
 }
 
-export function isPromise(obj: Promise<any>) {
-  return (
-    !!obj &&
-    (typeof obj === "object" || typeof obj === "function") &&
-    typeof obj.then === "function"
+export function validateResponse(
+  relay: Buffer,
+  response: RPCResponse,
+  timestamped = false
+): boolean {
+  const field = response.signedField || "data";
+  // @ts-ignore
+  const data = response[field];
+  let json = data;
+  if (typeof json !== "string") {
+    json = stringify(json);
+  }
+  const updated = response.updated as number;
+
+  if (timestamped && updated) {
+    json = updated.toString() + json;
+  }
+
+  return !!crypto.verify(
+    b4a.from(json),
+    b4a.from(response.signature as string, "hex"),
+    relay
   );
+}
+
+export function validateTimestampedResponse(
+  relay: Buffer,
+  response: RPCResponse
+): boolean {
+  return validateResponse(relay, response, true);
 }
