@@ -11,12 +11,6 @@ export default class RpcNetwork {
     this._dht = dht;
   }
 
-  private _activeRelay?: RPC;
-
-  get activeRelay(): RPC {
-    return this._activeRelay as RPC;
-  }
-
   private _dht: typeof DHT;
 
   get dht() {
