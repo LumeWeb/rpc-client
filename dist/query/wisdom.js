@@ -69,6 +69,9 @@ export default class WisdomRpcQuery extends RpcQueryBase {
         let relays = [];
         for (const relay in this._response?.relays) {
             const resp = this._response?.relays[relay];
+            if (resp?.error) {
+                continue;
+            }
             if (validateTimestampedResponse(b4a.from(relay, "hex"), resp)) {
                 relays.push(resp);
             }
