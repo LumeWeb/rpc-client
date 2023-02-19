@@ -1,13 +1,5 @@
 // @ts-ignore
 import DHT from "@hyperswarm/dht";
-import b4a from "b4a";
-import RPC from "@lumeweb/rpc";
-import { isPromise } from "./util.js";
-import SimpleRpcQuery from "./query/simple.js";
-import WisdomRpcQuery from "./query/wisdom.js";
-import ClearCacheRpcQuery from "./query/clearCache.js";
-import { RpcQueryOptions } from "./types.js";
-import { ClientRPCRequest } from "@lumeweb/relay-types";
 import RpcNetworkQueryFactory from "./query/index.js";
 
 export default class RpcNetwork {
