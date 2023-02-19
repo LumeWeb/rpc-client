@@ -1,6 +1,5 @@
 import {
   ClientRPCRequest,
-  RPCBroadcastRequest,
   RPCBroadcastResponse,
   RPCRequest,
   RPCResponse,
@@ -9,7 +8,6 @@ import { clearTimeout } from "timers";
 import b4a from "b4a";
 import {
   flatten,
-  isPromise,
   validateResponse,
   validateTimestampedResponse,
 } from "../util.js";
