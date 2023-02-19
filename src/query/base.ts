@@ -1,7 +1,4 @@
 import { clearTimeout, setTimeout } from "timers";
-import { pack, unpack } from "msgpackr";
-import { Buffer } from "buffer";
-import { isPromise } from "../util.js";
 import RpcNetwork from "../network.js";
 import { RpcQueryOptions } from "../types.js";
 import type {
@@ -9,8 +6,6 @@ import type {
   RPCRequest,
   RPCResponse,
 } from "@lumeweb/relay-types";
-import RPC from "@lumeweb/rpc";
-import { RPCBroadcastRequest } from "@lumeweb/relay-types";
 
 export default abstract class RpcQueryBase {
   protected _network: RpcNetwork;
