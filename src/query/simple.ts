@@ -1,19 +1,8 @@
 import RpcNetwork from "../network.js";
-import {
-  ClientRPCRequest,
-  RPCBroadcastRequest,
-  RPCRequest,
-  RPCResponse,
-} from "@lumeweb/relay-types";
+import { ClientRPCRequest, RPCResponse } from "@lumeweb/relay-types";
 import { RpcQueryOptions } from "../types.js";
-import { clearTimeout, setTimeout } from "timers";
 import b4a from "b4a";
-import {
-  hashQuery,
-  isPromise,
-  validateResponse,
-  validateTimestampedResponse,
-} from "../util.js";
+import { hashQuery, isPromise, validateTimestampedResponse } from "../util.js";
 import RPC from "@lumeweb/rpc";
 import { ERR_INVALID_SIGNATURE } from "../error.js";
 import RpcQueryBase from "./base.js";
