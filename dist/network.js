@@ -82,22 +82,8 @@ export default class RpcNetwork {
         this._swarm.join(createHash("lumeweb"));
         this.setupRelayPromise();
         this._swarm.on("connection", async (relay) => {
-            const query = this._factory.simple({
-                relay,
-                query: { module: "core", method: "get_methods", data: null },
-            });
-            const resp = await query.result;
             const pubkey = b4a.from(relay.remotePublicKey).toString("hex");
-            if (resp.data) {
-                this._relays.set(pubkey, relay);
-                resp.data.forEach((item) => {
-                    const methods = this._methods.get(item) ?? new Set();
-                    methods.add(pubkey);
-                    this._methods.set(item, methods);
-                });
-                this._relaysAvailableResolve?.();
-            }
-            relay.on("close", () => {
+            relay.once("close", () => {
                 this._methods.forEach((item) => {
                     if (item.has(pubkey)) {
                         item.delete(pubkey);
@@ -108,6 +94,20 @@ export default class RpcNetwork {
                     this.setupRelayPromise();
                 }
             });
+            const query = this._factory.simple({
+                relay,
+                query: { module: "core", method: "get_methods", data: null },
+            });
+            const resp = await query.result;
+            if (resp.data) {
+                this._relays.set(pubkey, relay);
+                resp.data.forEach((item) => {
+                    const methods = this._methods.get(item) ?? new Set();
+                    methods.add(pubkey);
+                    this._methods.set(item, methods);
+                });
+                this._relaysAvailableResolve?.();
+            }
         });
     }
     setupRelayPromise() {
