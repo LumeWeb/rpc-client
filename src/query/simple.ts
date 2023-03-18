@@ -6,7 +6,6 @@ import { hashQuery, isPromise, validateTimestampedResponse } from "../util.js";
 import RPC from "@lumeweb/rpc";
 import { ERR_INVALID_SIGNATURE } from "../error.js";
 import RpcQueryBase from "./base.js";
-import { query } from "express";
 
 export default class SimpleRpcQuery extends RpcQueryBase {
   protected _relay?: string | any;
