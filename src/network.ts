@@ -115,13 +115,25 @@ export default class RpcNetwork {
     this.setupRelayPromise();
 
     this._swarm.on("connection", async (relay: any) => {
+      const pubkey = b4a.from(relay.remotePublicKey).toString("hex");
+      relay.on("close", () => {
+        this._methods.forEach((item) => {
+          if (item.has(pubkey)) {
+            item.delete(pubkey);
+          }
+        });
+        this.relays.delete(pubkey);
+
+        if (!this._relays.size) {
+          this.setupRelayPromise();
+        }
+      });
+
       const query = this._factory.simple({
         relay,
         query: { module: "core", method: "get_methods", data: null },
       });
       const resp = await query.result;
-
-      const pubkey = b4a.from(relay.remotePublicKey).toString("hex");
 
       if (resp.data) {
         this._relays.set(pubkey, relay);
@@ -135,19 +147,6 @@ export default class RpcNetwork {
         });
         this._relaysAvailableResolve?.();
       }
-
-      relay.on("close", () => {
-        this._methods.forEach((item) => {
-          if (item.has(pubkey)) {
-            item.delete(pubkey);
-          }
-        });
-        this.relays.delete(pubkey);
-
-        if (!this._relays.size) {
-          this.setupRelayPromise();
-        }
-      });
     });
   }
 
