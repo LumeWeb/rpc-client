@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import RpcNetwork from "../network.js";
 import { ClientRPCRequest } from "@lumeweb/relay-types";
 import { RpcQueryOptions } from "../types.js";
@@ -12,7 +13,7 @@ export default class SimpleRpcQuery extends RpcQueryBase {
     options,
   }: {
     network: RpcNetwork;
-    relay?: string | any;
+    relay?: string | Buffer | any;
     query: ClientRPCRequest;
     options: RpcQueryOptions;
   });
