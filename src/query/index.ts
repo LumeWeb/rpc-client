@@ -1,6 +1,5 @@
 import { ClientRPCRequest, RPCRequest } from "@lumeweb/relay-types";
 import { RpcQueryOptions } from "../types.js";
-import WisdomRpcQuery from "./wisdom.js";
 import SimpleRpcQuery from "./simple.js";
 import ClearCacheRpcQuery from "./clearCache.js";
 import RpcNetwork from "../network.js";
@@ -13,23 +12,6 @@ export default class RpcNetworkQueryFactory {
     this._network = network;
   }
 
-  wisdom({
-    query,
-    options = {},
-  }: {
-    query: ClientRPCRequest;
-    options?: RpcQueryOptions;
-  }): WisdomRpcQuery {
-    return new WisdomRpcQuery(
-      this._network,
-      {
-        ...query,
-        bypassCache: query.bypassCache || this._network.bypassCache,
-      },
-      options
-    ).run();
-  }
-
   simple({
     relay,
     query,
@@ -39,15 +21,15 @@ export default class RpcNetworkQueryFactory {
     query: ClientRPCRequest;
     options?: RpcQueryOptions;
   }): SimpleRpcQuery {
-    return new SimpleRpcQuery(
-      this._network,
+    return new SimpleRpcQuery({
+      network: this._network,
       relay,
-      {
+      query: {
         ...query,
-        bypassCache: query.bypassCache || this._network.bypassCache,
+        bypassCache: query?.bypassCache || this._network.bypassCache,
       },
-      options
-    ).run();
+      options,
+    }).run();
   }
 
   clearCache({
@@ -59,8 +41,13 @@ export default class RpcNetworkQueryFactory {
     query: RPCRequest;
     options?: RpcQueryOptions;
   }): ClearCacheRpcQuery {
-    return new ClearCacheRpcQuery(this._network, relays, query, options).run();
+    return new ClearCacheRpcQuery({
+      network: this._network,
+      query,
+      relays,
+      options,
+    }).run();
   }
 }
 
-export { RpcNetwork, RpcQueryBase, SimpleRpcQuery, WisdomRpcQuery };
+export { RpcNetwork, RpcQueryBase, SimpleRpcQuery };

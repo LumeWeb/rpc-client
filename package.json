@@ -20,8 +20,11 @@
         "@hyperswarm/dht": "^6.0.1",
         "@lumeweb/rpc": "git+https://git.lumeweb.com/LumeWeb/rpc.git",
         "b4a": "^1.6.1",
+        "hypercore-crypto": "^3.3.1",
+        "hyperswarm": "^4.3.7",
         "json-stringify-deterministic": "^1.0.7",
         "libskynet": "^0.0.61",
-        "msgpackr": "^1.6.1"
+        "msgpackr": "^1.6.1",
+        "sodium-universal": "^4.0.0"
     }
 }

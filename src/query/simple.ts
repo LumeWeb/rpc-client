@@ -6,18 +6,24 @@ import { hashQuery, isPromise, validateTimestampedResponse } from "../util.js";
 import RPC from "@lumeweb/rpc";
 import { ERR_INVALID_SIGNATURE } from "../error.js";
 import RpcQueryBase from "./base.js";
+import { query } from "express";
 
 export default class SimpleRpcQuery extends RpcQueryBase {
-  protected _relay: string;
+  protected _relay?: string | any;
   protected declare _query: ClientRPCRequest;
 
-  constructor(
-    network: RpcNetwork,
-    relay: string,
-    query: ClientRPCRequest,
-    options: RpcQueryOptions
-  ) {
-    super(network, query, options);
+  constructor({
+    network,
+    relay,
+    query,
+    options,
+  }: {
+    network: RpcNetwork;
+    relay?: string | any;
+    query: ClientRPCRequest;
+    options: RpcQueryOptions;
+  }) {
+    super({ network, query, options });
     this._relay = relay;
   }
 
@@ -27,16 +33,37 @@ export default class SimpleRpcQuery extends RpcQueryBase {
   }
 
   protected async queryRelay(): Promise<any> {
-    let socket: any;
+    let socket = this._relay;
 
-    try {
-      socket = this._network.dht.connect(b4a.from(this._relay, "hex"));
-      if (isPromise(socket)) {
-        socket = await socket;
+    if (socket) {
+      if (socket === "string") {
+        try {
+          const relay = this._network.getRelay(socket);
+          if (this._network.getRelay(socket)) {
+            socket = relay;
+          }
+        } catch {}
       }
-    } catch (e) {
-      return;
+
+      if (socket === "string") {
+        try {
+          socket = this._network.swarm.connect(b4a.from(this._relay, "hex"));
+          if (isPromise(socket)) {
+            socket = await socket;
+          }
+        } catch {}
+      }
     }
+
+    if (!socket) {
+      socket = this._network.getAvailableRelay(
+        this._query.module,
+        this._query.method
+      );
+    }
+
+    this._relay = socket;
+
     await socket.opened;
 
     const rpc = new RPC(socket);
@@ -57,13 +84,8 @@ export default class SimpleRpcQuery extends RpcQueryBase {
     try {
       await this.queryRpc(rpc, this._query);
     } catch (e: any) {
-      // @ts-ignore
-      rpc.end();
       throw e;
     }
-
-    // @ts-ignore
-    rpc.end();
   }
 
   protected async checkResponses() {
@@ -76,7 +98,7 @@ export default class SimpleRpcQuery extends RpcQueryBase {
     if (
       !response.error &&
       !validateTimestampedResponse(
-        b4a.from(this._relay, "hex") as Buffer,
+        b4a.from(this._relay.remotePublicKey, "hex") as Buffer,
         response
       )
     ) {

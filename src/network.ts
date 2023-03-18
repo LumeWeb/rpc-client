@@ -1,10 +1,21 @@
 // @ts-ignore
-import DHT from "@hyperswarm/dht";
+import Hyperswarm from "hyperswarm";
 import RpcNetworkQueryFactory from "./query/index.js";
+import b4a from "b4a";
+import { createHash } from "./util.js";
 
 export default class RpcNetwork {
-  constructor(dht = new DHT()) {
-    this._dht = dht;
+  private _relaysAvailablePromise?: Promise<void>;
+  private _relaysAvailableResolve?: Function;
+  constructor(swarm = new Hyperswarm()) {
+    this._swarm = swarm;
+    this.init();
+  }
+
+  private _methods: Map<string, Set<string>> = new Map<string, Set<string>>();
+
+  get methods(): Map<string, Set<string>> {
+    return this._methods;
   }
 
   private _factory = new RpcNetworkQueryFactory(this);
@@ -13,10 +24,10 @@ export default class RpcNetwork {
     return this._factory;
   }
 
-  private _dht: typeof DHT;
+  private _swarm: typeof Hyperswarm;
 
-  get dht() {
-    return this._dht;
+  get swarm() {
+    return this._swarm;
   }
 
   private _majorityThreshold = 0.75;
@@ -49,9 +60,9 @@ export default class RpcNetwork {
     this._relayTimeout = value;
   }
 
-  private _relays: string[] = [];
+  private _relays: Map<string, any> = new Map<string, string[]>();
 
-  get relays(): string[] {
+  get relays(): Map<string, string[]> {
     return this._relays;
   }
 
@@ -59,10 +70,14 @@ export default class RpcNetwork {
 
   get ready(): Promise<void> {
     if (!this._ready) {
-      this._ready = this._dht.ready() as Promise<void>;
+      this._ready = this._swarm.dht.ready() as Promise<void>;
     }
 
     return this._ready;
+  }
+
+  get readyWithRelays(): Promise<void> {
+    return this.ready.then(() => this._relaysAvailablePromise);
   }
 
   private _bypassCache: boolean = false;
@@ -75,33 +90,70 @@ export default class RpcNetwork {
     this._bypassCache = value;
   }
 
-  private _maxRelays: number = 0;
+  public getAvailableRelay(module: string, method: string) {
+    method = `${module}.${method}`;
 
-  get maxRelays(): number {
-    return this._maxRelays;
-  }
+    let relays = this._methods.get(method) ?? new Set();
 
-  set maxRelays(value: number) {
-    this._maxRelays = value;
-  }
-
-  public addRelay(pubkey: string): void {
-    this._relays.push(pubkey);
-    this._relays = [...new Set(this._relays)];
-  }
-
-  public removeRelay(pubkey: string): boolean {
-    if (!this._relays.includes(pubkey)) {
-      return false;
+    if (!relays.size) {
+      throw Error("no available relay");
     }
 
-    delete this._relays[this._relays.indexOf(pubkey)];
-    this._relays = Object.values(this._relays);
-
-    return true;
+    return Array.from(relays)[Math.floor(Math.random() * relays.size)];
   }
 
-  public clearRelays(): void {
-    this._relays = [];
+  public getRelay(pubkey: string) {
+    if (this._relays.has(pubkey)) {
+      return this._relays.get(pubkey);
+    }
+
+    return undefined;
+  }
+
+  private init() {
+    this._swarm.join(createHash("lumeweb"));
+    this.setupRelayPromise();
+
+    this._swarm.on("connection", async (relay: any) => {
+      const query = this._factory.simple({
+        relay,
+        query: { module: "core", method: "get_methods", data: null },
+      });
+      const resp = await query.result;
+
+      const pubkey = b4a.from(relay.remotePublicKey).toString("hex");
+
+      if (resp.data) {
+        this._relays.set(pubkey, relay);
+
+        (resp.data as string[]).forEach((item) => {
+          const methods: Set<string> =
+            this._methods.get(item) ?? new Set<string>();
+
+          methods.add(pubkey);
+          this._methods.set(item, methods);
+        });
+        this._relaysAvailableResolve?.();
+      }
+
+      relay.on("close", () => {
+        this._methods.forEach((item) => {
+          if (item.has(pubkey)) {
+            item.delete(pubkey);
+          }
+        });
+        this.relays.delete(pubkey);
+
+        if (!this._relays.size) {
+          this.setupRelayPromise();
+        }
+      });
+    });
+  }
+
+  private setupRelayPromise() {
+    this._relaysAvailablePromise = new Promise<void>((resolve) => {
+      this._relaysAvailableResolve = resolve;
+    });
   }
 }

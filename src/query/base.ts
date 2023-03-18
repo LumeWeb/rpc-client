@@ -20,11 +20,15 @@ export default abstract class RpcQueryBase {
   protected _error?: string;
   protected _promiseResolve?: (data: any) => void;
 
-  constructor(
-    network: RpcNetwork,
-    query: ClientRPCRequest | RPCRequest,
-    options: RpcQueryOptions = {}
-  ) {
+  constructor({
+    network,
+    query,
+    options = {},
+  }: {
+    network: RpcNetwork;
+    query: ClientRPCRequest | RPCRequest;
+    options: RpcQueryOptions;
+  }) {
     this._network = network;
     this._query = query;
     this._options = options;
