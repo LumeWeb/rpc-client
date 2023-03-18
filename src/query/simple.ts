@@ -24,6 +24,10 @@ export default class SimpleRpcQuery extends RpcQueryBase {
     options: RpcQueryOptions;
   }) {
     super({ network, query, options });
+    if (b4a.isBuffer(relay)) {
+      relay = b4a.from(relay).toString("hex");
+    }
+
     this._relay = relay;
   }
 
