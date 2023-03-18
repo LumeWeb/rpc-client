@@ -19,7 +19,7 @@ export default class SimpleRpcQuery extends RpcQueryBase {
     options,
   }: {
     network: RpcNetwork;
-    relay?: string | any;
+    relay?: string | Buffer | any;
     query: ClientRPCRequest;
     options: RpcQueryOptions;
   }) {
