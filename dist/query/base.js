@@ -10,7 +10,7 @@ export default class RpcQueryBase {
     _response;
     _error;
     _promiseResolve;
-    constructor(network, query, options = {}) {
+    constructor({ network, query, options = {}, }) {
         this._network = network;
         this._query = query;
         this._options = options;

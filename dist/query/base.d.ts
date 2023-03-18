@@ -17,11 +17,15 @@ export default abstract class RpcQueryBase {
   protected _response?: RPCResponse;
   protected _error?: string;
   protected _promiseResolve?: (data: any) => void;
-  constructor(
-    network: RpcNetwork,
-    query: ClientRPCRequest | RPCRequest,
-    options?: RpcQueryOptions
-  );
+  constructor({
+    network,
+    query,
+    options,
+  }: {
+    network: RpcNetwork;
+    query: ClientRPCRequest | RPCRequest;
+    options: RpcQueryOptions;
+  });
   get result(): Promise<RPCResponse>;
   protected handeTimeout(): void;
   protected resolve(data?: RPCResponse, timeout?: boolean): void;

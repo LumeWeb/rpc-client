@@ -1,17 +1,26 @@
 // @ts-ignore
-import DHT from "@hyperswarm/dht";
+import Hyperswarm from "hyperswarm";
 import RpcNetworkQueryFactory from "./query/index.js";
+import b4a from "b4a";
+import { createHash } from "./util.js";
 export default class RpcNetwork {
-    constructor(dht = new DHT()) {
-        this._dht = dht;
+    _relaysAvailablePromise;
+    _relaysAvailableResolve;
+    constructor(swarm = new Hyperswarm()) {
+        this._swarm = swarm;
+        this.init();
+    }
+    _methods = new Map();
+    get methods() {
+        return this._methods;
     }
     _factory = new RpcNetworkQueryFactory(this);
     get factory() {
         return this._factory;
     }
-    _dht;
-    get dht() {
-        return this._dht;
+    _swarm;
+    get swarm() {
+        return this._swarm;
     }
     _majorityThreshold = 0.75;
     get majorityThreshold() {
@@ -34,16 +43,19 @@ export default class RpcNetwork {
     set relayTimeout(value) {
         this._relayTimeout = value;
     }
-    _relays = [];
+    _relays = new Map();
     get relays() {
         return this._relays;
     }
     _ready;
     get ready() {
         if (!this._ready) {
-            this._ready = this._dht.ready();
+            this._ready = this._swarm.dht.ready();
         }
         return this._ready;
+    }
+    get readyWithRelays() {
+        return this.ready.then(() => this._relaysAvailablePromise);
     }
     _bypassCache = false;
     get bypassCache() {
@@ -52,26 +64,55 @@ export default class RpcNetwork {
     set bypassCache(value) {
         this._bypassCache = value;
     }
-    _maxRelays = 0;
-    get maxRelays() {
-        return this._maxRelays;
-    }
-    set maxRelays(value) {
-        this._maxRelays = value;
-    }
-    addRelay(pubkey) {
-        this._relays.push(pubkey);
-        this._relays = [...new Set(this._relays)];
-    }
-    removeRelay(pubkey) {
-        if (!this._relays.includes(pubkey)) {
-            return false;
+    getAvailableRelay(module, method) {
+        method = `${module}.${method}`;
+        let relays = this._methods.get(method) ?? new Set();
+        if (!relays.size) {
+            throw Error("no available relay");
         }
-        delete this._relays[this._relays.indexOf(pubkey)];
-        this._relays = Object.values(this._relays);
-        return true;
+        return Array.from(relays)[Math.floor(Math.random() * relays.size)];
     }
-    clearRelays() {
-        this._relays = [];
+    getRelay(pubkey) {
+        if (this._relays.has(pubkey)) {
+            return this._relays.get(pubkey);
+        }
+        return undefined;
+    }
+    init() {
+        this._swarm.join(createHash("lumeweb"));
+        this.setupRelayPromise();
+        this._swarm.on("connection", async (relay) => {
+            const query = this._factory.simple({
+                relay,
+                query: { module: "core", method: "get_methods", data: null },
+            });
+            const resp = await query.result;
+            const pubkey = b4a.from(relay.remotePublicKey).toString("hex");
+            if (resp.data) {
+                this._relays.set(pubkey, relay);
+                resp.data.forEach((item) => {
+                    const methods = this._methods.get(item) ?? new Set();
+                    methods.add(pubkey);
+                    this._methods.set(item, methods);
+                });
+                this._relaysAvailableResolve?.();
+            }
+            relay.on("close", () => {
+                this._methods.forEach((item) => {
+                    if (item.has(pubkey)) {
+                        item.delete(pubkey);
+                    }
+                });
+                this.relays.delete(pubkey);
+                if (!this._relays.size) {
+                    this.setupRelayPromise();
+                }
+            });
+        });
+    }
+    setupRelayPromise() {
+        this._relaysAvailablePromise = new Promise((resolve) => {
+            this._relaysAvailableResolve = resolve;
+        });
     }
 }

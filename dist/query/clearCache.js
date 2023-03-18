@@ -1,21 +1,19 @@
 import { hashQuery } from "../util.js";
-import { getActiveRelay, setupRelay } from "../sharedRelay.js";
 import SimpleRpcQuery from "./simple.js";
 export default class ClearCacheRpcQuery extends SimpleRpcQuery {
     _relays;
-    constructor(network, relays, query, options) {
-        super(network, "", query, options);
+    constructor({ network, relays, query, options, }) {
+        super({ network, relay: "", query, options });
         this._relays = relays;
     }
     async _run() {
-        await setupRelay(this._network);
         // @ts-ignore
         this._relay = getActiveRelay().stream.remotePublicKey;
         await this.queryRelay();
         await this.checkResponses();
     }
     async queryRelay() {
-        return this.queryRpc(getActiveRelay(), {
+        return this.queryRpc(this._network.getAvailableRelay("rpc", "broadcast_request"), {
             module: "rpc",
             method: "broadcast_request",
             data: {

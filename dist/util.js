@@ -49,8 +49,7 @@ export function flatten(target, opts = {}) {
 export function validateResponse(relay, response, timestamped = false) {
     const field = response.signedField || "data";
     // @ts-ignore
-    const data = response[field];
-    let json = data;
+    let json = response[field];
     if (typeof json !== "string") {
         json = stringify(json);
     }
@@ -72,4 +71,10 @@ export function hashQuery(query) {
     const queryHash = Buffer.allocUnsafe(32);
     sodium.crypto_generichash(queryHash, Buffer.from(stringify(clonedQuery)));
     return queryHash.toString("hex");
+}
+export function createHash(data) {
+    const buffer = b4a.from(data);
+    let hash = b4a.allocUnsafe(32);
+    sodium.crypto_generichash(hash, buffer);
+    return hash;
 }

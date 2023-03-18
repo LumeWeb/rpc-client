@@ -1,10 +1,14 @@
 import RpcNetworkQueryFactory from "./query/index.js";
 export default class RpcNetwork {
-  constructor(dht?: any);
+  private _relaysAvailablePromise?;
+  private _relaysAvailableResolve?;
+  constructor(swarm?: any);
+  private _methods;
+  get methods(): Map<string, Set<string>>;
   private _factory;
   get factory(): RpcNetworkQueryFactory;
-  private _dht;
-  get dht(): any;
+  private _swarm;
+  get swarm(): any;
   private _majorityThreshold;
   get majorityThreshold(): number;
   set majorityThreshold(value: number);
@@ -15,17 +19,16 @@ export default class RpcNetwork {
   get relayTimeout(): number;
   set relayTimeout(value: number);
   private _relays;
-  get relays(): string[];
+  get relays(): Map<string, string[]>;
   private _ready?;
   get ready(): Promise<void>;
+  get readyWithRelays(): Promise<void>;
   private _bypassCache;
   get bypassCache(): boolean;
   set bypassCache(value: boolean);
-  private _maxRelays;
-  get maxRelays(): number;
-  set maxRelays(value: number);
-  addRelay(pubkey: string): void;
-  removeRelay(pubkey: string): boolean;
-  clearRelays(): void;
+  getAvailableRelay(module: string, method: string): string;
+  getRelay(pubkey: string): any;
+  private init;
+  private setupRelayPromise;
 }
 //# sourceMappingURL=network.d.ts.map

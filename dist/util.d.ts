@@ -12,4 +12,5 @@ export declare function validateTimestampedResponse(
   response: RPCResponse
 ): boolean;
 export declare function hashQuery(query: RPCRequest): string;
+export declare function createHash(data: string): Buffer;
 //# sourceMappingURL=util.d.ts.map
