@@ -17,7 +17,7 @@ export default class RpcNetworkQueryFactory {
     query,
     options = {},
   }: {
-    relay: string | Buffer;
+    relay?: string | Buffer;
     query: ClientRPCRequest;
     options?: RpcQueryOptions;
   }): SimpleRpcQuery {
