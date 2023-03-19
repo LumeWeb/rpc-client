@@ -1,6 +1,5 @@
 import b4a from "b4a";
-import { hashQuery, isPromise, validateTimestampedResponse } from "../util.js";
-import RPC from "@lumeweb/rpc";
+import { hashQuery, isPromise, setupStream, validateTimestampedResponse, } from "../util.js";
 import { ERR_INVALID_SIGNATURE } from "../error.js";
 import RpcQueryBase from "./base.js";
 export default class SimpleRpcQuery extends RpcQueryBase {
@@ -43,7 +42,7 @@ export default class SimpleRpcQuery extends RpcQueryBase {
         }
         this._relay = socket;
         await socket.opened;
-        const rpc = new RPC(socket);
+        const rpc = setupStream(socket);
         if (this._query.bypassCache) {
             delete this._query.bypassCache;
             await this.queryRpc(rpc, {

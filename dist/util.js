@@ -5,6 +5,9 @@ import crypto from "hypercore-crypto";
 // @ts-ignore
 import sodium from "sodium-universal";
 import b4a from "b4a";
+import RPC from "@lumeweb/rpc";
+const RPC_PROTOCOL_ID = b4a.from("lumeweb");
+export const RPC_PROTOCOL_SYMBOL = Symbol.for(RPC_PROTOCOL_ID.toString());
 export function isPromise(obj) {
     return (!!obj &&
         (typeof obj === "object" || typeof obj === "function") &&
@@ -77,4 +80,12 @@ export function createHash(data) {
     let hash = b4a.allocUnsafe(32);
     sodium.crypto_generichash(hash, buffer);
     return hash;
+}
+export function setupStream(stream) {
+    const existing = stream[RPC_PROTOCOL_SYMBOL];
+    if (existing) {
+        return existing;
+    }
+    stream[RPC_PROTOCOL_SYMBOL] = new RPC(stream);
+    return stream[RPC_PROTOCOL_SYMBOL];
 }
