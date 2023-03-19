@@ -70,7 +70,7 @@ export default class RpcNetwork {
         if (!relays.size) {
             throw Error("no available relay");
         }
-        return Array.from(relays)[Math.floor(Math.random() * relays.size)];
+        return this._relays.get(Array.from(relays)[Math.floor(Math.random() * relays.size)]);
     }
     getRelay(pubkey) {
         if (this._relays.has(pubkey)) {

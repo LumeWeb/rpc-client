@@ -26,7 +26,7 @@ export default class RpcNetwork {
   private _bypassCache;
   get bypassCache(): boolean;
   set bypassCache(value: boolean);
-  getAvailableRelay(module: string, method: string): string;
+  getAvailableRelay(module: string, method: string): any;
   getRelay(pubkey: string): any;
   private init;
   private setupRelayPromise;
