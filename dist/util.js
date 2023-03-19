@@ -6,8 +6,7 @@ import crypto from "hypercore-crypto";
 import sodium from "sodium-universal";
 import b4a from "b4a";
 import RPC from "@lumeweb/rpc";
-const RPC_PROTOCOL_ID = b4a.from("lumeweb");
-export const RPC_PROTOCOL_SYMBOL = Symbol.for(RPC_PROTOCOL_ID.toString());
+export const RPC_PROTOCOL_SYMBOL = Symbol.for("lumeweb");
 export function isPromise(obj) {
     return (!!obj &&
         (typeof obj === "object" || typeof obj === "function") &&
