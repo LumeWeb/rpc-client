@@ -8,7 +8,7 @@
         "build": "rimraf dist && tsc"
     },
     "devDependencies": {
-        "@lumeweb/relay-types": "git+https://git.lumeweb.com/LumeWeb/relay-types.git",
+        "@lumeweb/interface-relay": "git+https://git.lumeweb.com/LumeWeb/interface-relay.git",
         "@types/b4a": "^1.6.0",
         "@types/express": "^4.17.14",
         "@types/node": "^18.0.0",

@@ -1,6 +1,6 @@
 // @ts-ignore
 import stringify from "json-stringify-deterministic";
-import type { RPCRequest, RPCResponse } from "@lumeweb/relay-types";
+import type { RPCRequest, RPCResponse } from "@lumeweb/interface-relay";
 // @ts-ignore
 import crypto from "hypercore-crypto";
 // @ts-ignore

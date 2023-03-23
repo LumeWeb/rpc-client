@@ -1,5 +1,5 @@
 import RpcNetwork from "../network.js";
-import { RPCBroadcastRequest, RPCRequest } from "@lumeweb/relay-types";
+import { RPCBroadcastRequest, RPCRequest } from "@lumeweb/interface-relay";
 import { RpcQueryOptions } from "../types.js";
 import { hashQuery } from "../util.js";
 import SimpleRpcQuery from "./simple.js";

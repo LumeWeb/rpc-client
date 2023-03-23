@@ -1,5 +1,5 @@
 import RpcNetwork from "../network.js";
-import { ClientRPCRequest, RPCResponse } from "@lumeweb/relay-types";
+import { ClientRPCRequest, RPCResponse } from "@lumeweb/interface-relay";
 import { RpcQueryOptions } from "../types.js";
 import b4a from "b4a";
 import {
