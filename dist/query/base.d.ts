@@ -5,7 +5,7 @@ import type {
   ClientRPCRequest,
   RPCRequest,
   RPCResponse,
-} from "@lumeweb/relay-types";
+} from "@lumeweb/interface-relay";
 export default abstract class RpcQueryBase {
   protected _network: RpcNetwork;
   protected _query: RPCRequest;

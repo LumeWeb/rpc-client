@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import type { RPCRequest, RPCResponse } from "@lumeweb/relay-types";
+import type { RPCRequest, RPCResponse } from "@lumeweb/interface-relay";
 export declare const RPC_PROTOCOL_SYMBOL: unique symbol;
 export declare function isPromise(obj: Promise<any>): boolean;
 export declare function flatten(target: any, opts?: any): any[];

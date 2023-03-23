@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import { ClientRPCRequest, RPCRequest } from "@lumeweb/relay-types";
+import { ClientRPCRequest, RPCRequest } from "@lumeweb/interface-relay";
 import { RpcQueryOptions } from "../types.js";
 import SimpleRpcQuery from "./simple.js";
 import ClearCacheRpcQuery from "./clearCache.js";

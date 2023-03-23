@@ -1,5 +1,5 @@
 import RpcNetwork from "../network.js";
-import { RPCRequest } from "@lumeweb/relay-types";
+import { RPCRequest } from "@lumeweb/interface-relay";
 import { RpcQueryOptions } from "../types.js";
 import SimpleRpcQuery from "./simple.js";
 export default class ClearCacheRpcQuery extends SimpleRpcQuery {
