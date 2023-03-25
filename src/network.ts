@@ -119,7 +119,9 @@ export default class RpcNetwork {
     this.setupRelayPromise();
 
     this._swarm.on("connection", async (relay: any) => {
-      const pubkey = b4a.from(relay.remotePublicKey).toString("hex");
+      const pubkey = b4a
+        .from(await maybeGetAsyncProperty(relay.remotePublicKey))
+        .toString("hex");
       relay.once("close", () => {
         this._methods.forEach((item) => {
           if (item.has(pubkey)) {
