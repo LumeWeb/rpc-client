@@ -5,6 +5,7 @@ import b4a from "b4a";
 import {
   hashQuery,
   isPromise,
+  maybeGetAsyncProperty,
   setupStream,
   validateTimestampedResponse,
 } from "../util.js";
@@ -44,7 +45,7 @@ export default class SimpleRpcQuery extends RpcQueryBase {
     let socket = this._relay;
 
     if (socket) {
-      if (socket === "string") {
+      if (typeof socket === "string") {
         try {
           const relay = this._network.getRelay(socket);
           if (this._network.getRelay(socket)) {
@@ -53,7 +54,7 @@ export default class SimpleRpcQuery extends RpcQueryBase {
         } catch {}
       }
 
-      if (socket === "string") {
+      if (typeof socket === "string") {
         try {
           socket = this._network.swarm.connect(b4a.from(this._relay, "hex"));
           if (isPromise(socket)) {
@@ -106,7 +107,10 @@ export default class SimpleRpcQuery extends RpcQueryBase {
     if (
       !response.error &&
       !validateTimestampedResponse(
-        b4a.from(this._relay.remotePublicKey, "hex") as Buffer,
+        b4a.from(
+          await maybeGetAsyncProperty(this._relay.remotePublicKey),
+          "hex"
+        ) as Buffer,
         response
       )
     ) {
