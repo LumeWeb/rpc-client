@@ -125,3 +125,15 @@ export function setupStream(stream: any) {
 
   return stream[RPC_PROTOCOL_SYMBOL];
 }
+
+export async function maybeGetAsyncProperty(object: any) {
+  if (typeof object === "function") {
+    object = object();
+  }
+
+  if (isPromise(object)) {
+    object = await object;
+  }
+
+  return object;
+}
