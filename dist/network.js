@@ -2,7 +2,7 @@
 import Hyperswarm from "hyperswarm";
 import RpcNetworkQueryFactory from "./query/index.js";
 import b4a from "b4a";
-import { createHash, isPromise } from "./util.js";
+import { createHash, maybeGetAsyncProperty } from "./util.js";
 export default class RpcNetwork {
     _relaysAvailablePromise;
     _relaysAvailableResolve;
@@ -50,16 +50,7 @@ export default class RpcNetwork {
     _ready;
     get ready() {
         if (!this._ready) {
-            let dht = this._swarm.dht;
-            if (typeof dht === "function") {
-                dht = dht();
-            }
-            if (isPromise(dht)) {
-                this._ready = dht.then((dht) => dht.ready());
-            }
-            else {
-                this._ready = this._swarm.dht.ready();
-            }
+            this._ready = maybeGetAsyncProperty(this._swarm.dht).then((dht) => dht.ready());
         }
         return this._ready;
     }
@@ -91,7 +82,9 @@ export default class RpcNetwork {
         this._swarm.join(createHash("lumeweb"));
         this.setupRelayPromise();
         this._swarm.on("connection", async (relay) => {
-            const pubkey = b4a.from(relay.remotePublicKey).toString("hex");
+            const pubkey = b4a
+                .from(await maybeGetAsyncProperty(relay.remotePublicKey))
+                .toString("hex");
             relay.once("close", () => {
                 this._methods.forEach((item) => {
                     if (item.has(pubkey)) {

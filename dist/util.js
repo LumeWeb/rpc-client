@@ -88,3 +88,12 @@ export function setupStream(stream) {
     stream[RPC_PROTOCOL_SYMBOL] = new RPC(stream);
     return stream[RPC_PROTOCOL_SYMBOL];
 }
+export async function maybeGetAsyncProperty(object) {
+    if (typeof object === "function") {
+        object = object();
+    }
+    if (isPromise(object)) {
+        object = await object;
+    }
+    return object;
+}
