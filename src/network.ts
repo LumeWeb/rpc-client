@@ -2,7 +2,7 @@
 import Hyperswarm from "hyperswarm";
 import RpcNetworkQueryFactory from "./query/index.js";
 import b4a from "b4a";
-import { createHash } from "./util.js";
+import { createHash, isPromise } from "./util.js";
 
 export default class RpcNetwork {
   private _relaysAvailablePromise?: Promise<void>;
@@ -70,10 +70,18 @@ export default class RpcNetwork {
 
   get ready(): Promise<void> {
     if (!this._ready) {
-      this._ready = this._swarm.dht.ready() as Promise<void>;
+      let dht = this._swarm.dht;
+      if (typeof dht === "function") {
+        dht = dht();
+      }
+      if (isPromise(dht)) {
+        this._ready = dht.then((dht: any) => dht.ready());
+      } else {
+        this._ready = this._swarm.dht.ready() as Promise<void>;
+      }
     }
 
-    return this._ready;
+    return this._ready as Promise<void>;
   }
 
   get readyWithRelays(): Promise<void> {
