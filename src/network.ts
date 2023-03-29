@@ -141,6 +141,11 @@ export default class RpcNetwork {
       });
       const resp = await query.result;
 
+      if (resp.error) {
+        relay.end();
+        return;
+      }
+
       if (resp.data) {
         this._relays.set(pubkey, relay);
 
