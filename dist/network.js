@@ -101,6 +101,10 @@ export default class RpcNetwork {
                 query: { module: "core", method: "get_methods", data: null },
             });
             const resp = await query.result;
+            if (resp.error) {
+                relay.end();
+                return;
+            }
             if (resp.data) {
                 this._relays.set(pubkey, relay);
                 resp.data.forEach((item) => {
