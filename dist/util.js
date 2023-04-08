@@ -80,13 +80,16 @@ export function createHash(data) {
     sodium.crypto_generichash(hash, buffer);
     return hash;
 }
-export function setupStream(stream) {
+export async function setupStream(stream) {
     const existing = stream[RPC_PROTOCOL_SYMBOL];
-    if (existing) {
+    if (!existing) {
+        await existing._channel.ready;
         return existing;
     }
-    stream[RPC_PROTOCOL_SYMBOL] = new RPC(stream);
-    return stream[RPC_PROTOCOL_SYMBOL];
+    const rpc = new RPC(stream);
+    stream[RPC_PROTOCOL_SYMBOL] = rpc;
+    await existing.ready;
+    return rpc;
 }
 export async function maybeGetAsyncProperty(object) {
     if (typeof object === "function") {

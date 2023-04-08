@@ -42,7 +42,7 @@ export default class SimpleRpcQuery extends RpcQueryBase {
         }
         this._relay = socket;
         await socket.opened;
-        const rpc = setupStream(socket);
+        const rpc = await setupStream(socket);
         if (this._query.bypassCache) {
             delete this._query.bypassCache;
             await this.queryRpc(rpc, {

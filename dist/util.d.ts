@@ -14,6 +14,6 @@ export declare function validateTimestampedResponse(
 ): boolean;
 export declare function hashQuery(query: RPCRequest): string;
 export declare function createHash(data: string): Buffer;
-export declare function setupStream(stream: any): any;
+export declare function setupStream(stream: any): Promise<any>;
 export declare function maybeGetAsyncProperty(object: any): Promise<any>;
 //# sourceMappingURL=util.d.ts.map
