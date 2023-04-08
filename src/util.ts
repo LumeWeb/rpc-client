@@ -115,15 +115,19 @@ export function createHash(data: string): Buffer {
   return hash;
 }
 
-export function setupStream(stream: any) {
+export async function setupStream(stream: any) {
   const existing = stream[RPC_PROTOCOL_SYMBOL];
-  if (existing) {
+  if (!existing) {
+    await existing._channel.ready;
     return existing;
   }
 
-  stream[RPC_PROTOCOL_SYMBOL] = new RPC(stream);
+  const rpc = new RPC(stream);
+  stream[RPC_PROTOCOL_SYMBOL] = rpc;
 
-  return stream[RPC_PROTOCOL_SYMBOL];
+  await existing.ready;
+
+  return rpc;
 }
 
 export async function maybeGetAsyncProperty(object: any) {
