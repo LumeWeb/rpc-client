@@ -117,7 +117,7 @@ export function createHash(data: string): Buffer {
 
 export async function setupStream(stream: any) {
   const existing = stream[RPC_PROTOCOL_SYMBOL];
-  if (!existing) {
+  if (existing) {
     await existing._channel.ready;
     return existing;
   }
