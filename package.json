@@ -1,7 +1,7 @@
 {
     "name": "@lumeweb/rpc-client",
     "type": "module",
-    "version": "0.1.0",
+    "version": "0.0.2-develop.1",
     "main": "lib/index.js",
     "repository": {
         "type": "git",
@@ -12,7 +12,6 @@
         "presetter": "*"
     },
     "readme": "ERROR: No README data found!",
-    "_id": "@lumeweb/rpc-client@0.1.0",
     "scripts": {
         "prepare": "presetter bootstrap",
         "build": "run build",
