@@ -2,29 +2,27 @@
     "name": "@lumeweb/rpc-client",
     "type": "module",
     "version": "0.1.0",
-    "description": "",
-    "main": "dist/index.js",
-    "scripts": {
-        "build": "rimraf dist && tsc"
+    "main": "lib/index.js",
+    "repository": {
+        "type": "git",
+        "url": "gitea@git.lumeweb.com:LumeWeb/rpc-client.git"
     },
     "devDependencies": {
-        "@lumeweb/interface-relay": "git+https://git.lumeweb.com/LumeWeb/interface-relay.git",
-        "@types/b4a": "^1.6.0",
-        "@types/express": "^4.17.14",
-        "@types/node": "^18.0.0",
-        "node-cache": "^5.1.2",
-        "prettier": "^2.7.1",
-        "typescript": "^4.7.4"
+        "@lumeweb/node-library-preset": "^0.2.7",
+        "presetter": "*"
+    },
+    "readme": "ERROR: No README data found!",
+    "_id": "@lumeweb/rpc-client@0.1.0",
+    "scripts": {
+        "prepare": "presetter bootstrap",
+        "build": "run build",
+        "semantic-release": "semantic-release"
     },
     "dependencies": {
-        "@hyperswarm/dht": "^6.0.1",
-        "@lumeweb/rpc": "git+https://git.lumeweb.com/LumeWeb/rpc.git",
-        "b4a": "^1.6.1",
-        "hypercore-crypto": "^3.3.1",
-        "hyperswarm": "^4.3.7",
-        "json-stringify-deterministic": "^1.0.7",
-        "libskynet": "^0.0.61",
-        "msgpackr": "^1.6.1",
-        "sodium-universal": "^4.0.0"
+        "@lumeweb/interface-relay": "0.0.2-develop.1",
+        "@lumeweb/rpc": "0.0.2-develop.2"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }
