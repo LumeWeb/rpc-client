@@ -3,6 +3,7 @@ import Hyperswarm from "hyperswarm";
 import RpcNetworkQueryFactory from "./query/index.js";
 import b4a from "b4a";
 import { createHash, maybeGetAsyncProperty } from "./util.js";
+import { uint8ArrayToHexString } from "binconv";
 
 export default class RpcNetwork {
   private _relaysAvailablePromise?: Promise<void>;
@@ -71,7 +72,7 @@ export default class RpcNetwork {
   get ready(): Promise<void> {
     if (!this._ready) {
       this._ready = maybeGetAsyncProperty(this._swarm.dht).then((dht: any) =>
-        dht.ready()
+        dht.ready(),
       ) as Promise<void>;
     }
 
@@ -102,7 +103,7 @@ export default class RpcNetwork {
     }
 
     return this._relays.get(
-      Array.from(relays)[Math.floor(Math.random() * relays.size)]
+      Array.from(relays)[Math.floor(Math.random() * relays.size)],
     );
   }
 
@@ -119,9 +120,9 @@ export default class RpcNetwork {
     this.setupRelayPromise();
 
     this._swarm.on("connection", async (relay: any) => {
-      const pubkey = b4a
-        .from(await maybeGetAsyncProperty(relay.remotePublicKey))
-        .toString("hex");
+      const pubkey = uint8ArrayToHexString(
+        await maybeGetAsyncProperty(relay.remotePublicKey),
+      );
       relay.once("close", () => {
         this._methods.forEach((item) => {
           if (item.has(pubkey)) {
