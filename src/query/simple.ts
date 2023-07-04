@@ -9,7 +9,6 @@ import {
   setupStream,
   validateTimestampedResponse,
 } from "../util.js";
-import RPC from "@lumeweb/rpc";
 import { ERR_INVALID_SIGNATURE } from "../error.js";
 import RpcQueryBase from "./base.js";
 
@@ -67,7 +66,7 @@ export default class SimpleRpcQuery extends RpcQueryBase {
     if (!socket) {
       socket = this._network.getAvailableRelay(
         this._query.module,
-        this._query.method
+        this._query.method,
       );
     }
 
@@ -109,9 +108,9 @@ export default class SimpleRpcQuery extends RpcQueryBase {
       !validateTimestampedResponse(
         b4a.from(
           await maybeGetAsyncProperty(this._relay.remotePublicKey),
-          "hex"
+          "hex",
         ) as Buffer,
-        response
+        response,
       )
     ) {
       response = { error: ERR_INVALID_SIGNATURE };
