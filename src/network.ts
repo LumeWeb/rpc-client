@@ -1,7 +1,6 @@
 // @ts-ignore
 import Hyperswarm from "hyperswarm";
 import RpcNetworkQueryFactory from "./query/index.js";
-import b4a from "b4a";
 import { createHash, maybeGetAsyncProperty } from "./util.js";
 import { uint8ArrayToHexString } from "binconv";
 
