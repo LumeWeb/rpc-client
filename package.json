@@ -1,7 +1,7 @@
 {
     "name": "@lumeweb/rpc-client",
     "type": "module",
-    "version": "0.0.2-develop.2",
+    "version": "0.0.2-develop.3",
     "main": "lib/index.js",
     "repository": {
         "type": "git",

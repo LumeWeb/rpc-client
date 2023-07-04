@@ -1,12 +1,12 @@
 {
     "name": "@lumeweb/rpc-client",
-    "version": "0.0.2-develop.2",
+    "version": "0.0.2-develop.3",
     "lockfileVersion": 3,
     "requires": true,
     "packages": {
         "": {
             "name": "@lumeweb/rpc-client",
-            "version": "0.0.2-develop.2",
+            "version": "0.0.2-develop.3",
             "dependencies": {
                 "@lumeweb/interface-relay": "0.0.2-develop.1",
                 "@lumeweb/rpc": "0.0.2-develop.2",

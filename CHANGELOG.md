@@ -1,3 +1,10 @@
+## [0.0.2-develop.3](https://git.lumeweb.com/LumeWeb/rpc-client/compare/v0.0.2-develop.2...v0.0.2-develop.3) (2023-07-04)
+
+
+### Bug Fixes
+
+* remove unneeded import ([3a84b0e](https://git.lumeweb.com/LumeWeb/rpc-client/commit/3a84b0e1cb52f3732ddf06a089f9864735e1be34))
+
 ## [0.0.2-develop.2](https://git.lumeweb.com/LumeWeb/rpc-client/compare/v0.0.2-develop.1...v0.0.2-develop.2) (2023-07-04)
 
 ## [0.0.2-develop.1](https://git.lumeweb.com/LumeWeb/rpc-client/compare/v0.0.1...v0.0.2-develop.1) (2023-07-04)
