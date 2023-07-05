@@ -19,7 +19,7 @@
     },
     "dependencies": {
         "@lumeweb/interface-relay": "0.0.2-develop.1",
-        "@lumeweb/rpc": "0.0.2-develop.2",
+        "@lumeweb/rpc": "0.0.2-develop.3",
         "b4a": "^1.6.4",
         "binconv": "^0.2.0",
         "hypercore-crypto": "^3.3.1",
