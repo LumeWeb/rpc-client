@@ -7,9 +7,16 @@ import { uint8ArrayToHexString } from "binconv";
 export default class RpcNetwork {
   private _relaysAvailablePromise?: Promise<void>;
   private _relaysAvailableResolve?: Function;
+
   constructor(swarm = new Hyperswarm()) {
     this._swarm = swarm;
     this.init();
+  }
+
+  private _endPeerOnError?: (peer: any) => Promise<boolean>;
+
+  set endPeerOnError(value: (peer: any) => Promise<boolean>) {
+    this._endPeerOnError = value;
   }
 
   private _methods: Map<string, Set<string>> = new Map<string, Set<string>>();
@@ -142,7 +149,9 @@ export default class RpcNetwork {
       const resp = await query.result;
 
       if (resp.error) {
-        relay.end();
+        if (await this._endPeerOnError?.(relay)) {
+          relay.end();
+        }
         return;
       }
 
