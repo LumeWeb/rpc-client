@@ -1,3 +1,5 @@
+## [0.0.2-develop.6](https://git.lumeweb.com/LumeWeb/rpc-client/compare/v0.0.2-develop.5...v0.0.2-develop.6) (2023-07-23)
+
 ## [0.0.2-develop.5](https://git.lumeweb.com/LumeWeb/rpc-client/compare/v0.0.2-develop.4...v0.0.2-develop.5) (2023-07-22)
 
 
