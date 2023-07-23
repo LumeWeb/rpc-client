@@ -9,7 +9,7 @@
             "version": "0.0.2-develop.4",
             "dependencies": {
                 "@lumeweb/interface-relay": "0.0.2-develop.1",
-                "@lumeweb/rpc": "0.0.2-develop.3",
+                "@lumeweb/rpc": "0.0.2-develop.5",
                 "b4a": "^1.6.4",
                 "binconv": "^0.2.0",
                 "hypercore-crypto": "^3.3.1",
@@ -1831,9 +1831,9 @@
             }
         },
         "node_modules/@lumeweb/rpc": {
-            "version": "0.0.2-develop.3",
-            "resolved": "https://registry.npmjs.org/@lumeweb/rpc/-/rpc-0.0.2-develop.3.tgz",
-            "integrity": "sha512-zXmioX1HPXt6n+jwz9RLilWUNe1mSoZ6vA7SVmu3JpbNTuJKWqC+2W5csRH8ECQRaWjl5hxF38Gbx4cJV7PbaQ==",
+            "version": "0.0.2-develop.5",
+            "resolved": "https://registry.npmjs.org/@lumeweb/rpc/-/rpc-0.0.2-develop.5.tgz",
+            "integrity": "sha512-7EZxxVNIqwHf8yznoWdnuaYPZ97vJbDpS97GYFViPh6OumgknrpZn2Dw008l9O5zSvx9y5ZRW19bHANvmTuoKg==",
             "dependencies": {
                 "compact-encoding": "2.12.0",
                 "protomux-rpc": "1.4.1"
