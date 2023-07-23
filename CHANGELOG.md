@@ -1,3 +1,10 @@
+## [0.0.2-develop.5](https://git.lumeweb.com/LumeWeb/rpc-client/compare/v0.0.2-develop.4...v0.0.2-develop.5) (2023-07-22)
+
+
+### Bug Fixes
+
+* add _endPeerOnError optional function to conditionally end a peer if there is an error ([5971d0a](https://git.lumeweb.com/LumeWeb/rpc-client/commit/5971d0ace858eebd30afbf4b644457d42acc04dd))
+
 ## [0.0.2-develop.4](https://git.lumeweb.com/LumeWeb/rpc-client/compare/v0.0.2-develop.3...v0.0.2-develop.4) (2023-07-04)
 
 
